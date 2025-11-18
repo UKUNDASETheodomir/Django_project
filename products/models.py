@@ -8,7 +8,7 @@ class product(models.Model):
         ('unavailable', 'Unvailable'),
     )
     vendor = models.ForeignKey('accounts.CustomUser',on_delete = models.CASCADE)
-    name = models.CharField()
+    name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=20,decimal_places=4)
     stock = models.IntegerField()

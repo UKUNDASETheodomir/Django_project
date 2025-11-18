@@ -134,6 +134,9 @@ LOGIN_REDIRECT_URL = '/dashboard/'  # after successful login
 LOGOUT_REDIRECT_URL = '/login/'     # after logout
 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 
 # Default primary key field type
