@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Application definition
 
@@ -126,6 +127,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Default login and logout redirects
+LOGIN_URL = '/login/'             # where to go if not logged in
+LOGIN_REDIRECT_URL = '/dashboard/'  # after successful login
+LOGOUT_REDIRECT_URL = '/login/'     # after logout
+
+
 
 
 # Default primary key field type

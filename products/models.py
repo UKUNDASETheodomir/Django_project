@@ -7,10 +7,10 @@ class product(models.Model):
         ('available', 'Available'),
         ('unavailable', 'Unvailable'),
     )
-    vendor = models.ForeignKey('accounts.user',on_delete = models.CASCADE)
+    vendor = models.ForeignKey('accounts.CustomUser',on_delete = models.CASCADE)
     name = models.CharField()
     description = models.TextField()
-    price = models.DecimalField(max_length=255,decimal_places=4)
+    price = models.DecimalField(max_digits=20,decimal_places=4)
     stock = models.IntegerField()
     image = models.ImageField(upload_to='media/products/')
     created_at = models.DateTimeField(auto_now_add=True)
