@@ -1,0 +1,14 @@
+<h2>Available Products</h2>
+
+{% for item in products %}
+<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+    <h3>{{ item.name }}</h3>
+    <p>{{ item.description }}</p>
+    <p><strong>Price:</strong> {{ item.price }}</p>
+    <p><strong>Stock:</strong> {{ item.stock }}</p>
+
+    <a href="{% url 'add_to_cart' item.id %}">Order Now</a>
+</div>
+{% empty %}
+<p>No products available.</p>
+{% endfor %}

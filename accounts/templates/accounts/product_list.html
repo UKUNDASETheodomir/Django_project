@@ -1,0 +1,19 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+
+<h2>All Products</h2>
+
+<ul>
+    {% for p in products %}
+        <li>
+            {{ p.name }} - {{ p.price }} <br>
+            {% if p.image %}
+                <img src="{{ p.image.url }}" width="120">
+            {% endif %}
+        </li>
+    {% empty %}
+        <p>No products available.</p>
+    {% endfor %}
+</ul>
+
+{% endblock %}

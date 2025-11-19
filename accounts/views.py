@@ -44,3 +44,7 @@ def home_view(request):
 @login_required
 def dashboard(request):
     return render(request, "accounts/dashboard.html")
+
+@login_required
+def vendor_dashboard(request):
+    return render(request, 'accounts/vendor_dashboard.html')
