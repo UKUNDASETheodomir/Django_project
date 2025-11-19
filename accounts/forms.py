@@ -1,10 +1,53 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 User = get_user_model()
 
 class RegisterForm(UserCreationForm):
+    USER_TYPE_CHOICES = (
+        ('C', 'Customer'),
+        ('V', 'Vendor'),
+      )
+    
+    # Override user_type field as a ChoiceField with a dropdown
+    user_type = forms.ChoiceField(
+        choices=USER_TYPE_CHOICES,       # The options the user can select
+        widget=forms.Select(attrs={      # Use a dropdown select
+            'class': 'form-select',     # Bootstrap class for styling
+        }),
+        required=True                   # Make this field mandatory
+    )
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Enter your password',
+            'class': 'form-control',
+        })
+    )
+
+    # Override password2 with placeholder and Bootstrap class
+    password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Confirm your password',
+            'class': 'form-control',
+        })
+    )
+    
     class Meta:
-        model = User
-        fields = ['username', 'email', 'user_type', 'password1', 'password2']
+        model = User               # The custom user model to save data
+        fields = ['username', 'email', 'user_type', 'password1', 'password2']  # Fields to include in the form
+        
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'placeholder': 'Enter your username',
+                'class': 'form-control',     # Bootstrap class for styling
+            }),
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'Enter your email',
+                'class': 'form-control',
+            }),
+          
+        }

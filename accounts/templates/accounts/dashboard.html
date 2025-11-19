@@ -4,6 +4,8 @@
 
 {% block content %}
 <h2>Welcome, {{ request.user.username }}!</h2>
-<p>You are logged in as {{ request.user.user_type}}.</p>
-<p>This is your dashboard.</p>
+<p>You are logged in as 
+  {% if request.user.user_type == 'C' %}Customer{% elif request.user.user_type == 'V' %}Vendor{% endif %}.
+</p>
+
 {% endblock %}

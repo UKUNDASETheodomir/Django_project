@@ -40,7 +40,7 @@ def logout_view(request):
     return redirect("login")
 
 def home_view(request):
-    return render(request, "accounts/base.html")
+    return render(request, "accounts/home.html")
 @login_required
 def dashboard(request):
     return render(request, "accounts/dashboard.html")
