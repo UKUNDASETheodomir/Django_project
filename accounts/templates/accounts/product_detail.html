@@ -1,0 +1,33 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}{{ product.name }} - SokoHub{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ product.name }}</h2>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
+                    <p class="card-text"><strong>Stock:</strong> {{ product.stock }}</p>
+                    <p class="card-text"><strong>Vendor:</strong> {{ product.vendor.username }}</p>
+                    <p class="card-text"><strong>Status:</strong> {{ product.status|title }}</p>
+
+                    {% if product.stock > 0 %}
+                        <button class="btn btn-success">Place order</button>
+                    {% else %}
+                        <button class="btn btn-secondary" disabled>Out of Stock</button>
+                    {% endif %}
+
+                    <a href="{% url 'product_list' %}" class="btn btn-link mt-3">Back to Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

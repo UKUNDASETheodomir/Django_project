@@ -1,19 +1,35 @@
-{% extends "accounts/base.html" %}
+{% extends 'accounts/base.html' %}
+
+{% block title %}Products - SokoHub{% endblock %}
+
 {% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Available Products</h2>
 
-<h2>All Products</h2>
-
-<ul>
-    {% for p in products %}
-        <li>
-            {{ p.name }} - {{ p.price }} <br>
-            {% if p.image %}
-                <img src="{{ p.image.url }}" width="120">
+    {% if user.is_authenticated and user.user_type == 'C' %}
+        <div class="row">
+            {% for product in products %}
+                {% if product.status == 'available' %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <img src="{{ product.image.url }}" class="card-img-top mb-3" alt="{{ product.name }}">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                            <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
+                            <p class="card-text"><strong>Stock:</strong> {{ product.stock }}</p>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-primary mt-auto">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% empty %}
+                <p>No products available at the moment.</p>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>You need to be a customer to view products.</p>
             {% endif %}
-        </li>
-    {% empty %}
-        <p>No products available.</p>
-    {% endfor %}
-</ul>
-
-{% endblock %}
+        </div>
+        {% endblock %}
+        
