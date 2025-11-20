@@ -27,6 +27,7 @@ def vendor_products(request):
 def product_list(request):
     # Show only active products
     products = product.objects.filter(status='active')
+
     return render(request, 'products/product_list.html', {'products': products})
 @login_required
 def create_product(request):

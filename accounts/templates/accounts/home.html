@@ -1,10 +1,71 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 
 {% block title %}Home - SokoHub{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Welcome to SokoHub</h2>
-   
-</div>
+<!-- Hero Section -->
+<section class="py-5 text-white" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/static/images/market.jpg') center/cover no-repeat;">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold">Welcome to SokoHub</h1>
+        <p class="lead">Your trusted online marketplace — fast, secure, and reliable.</p>
+        <a href="#categories" class="btn btn-primary btn-lg mt-3">Shop Now</a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container text-center">
+        <h2 class="mb-4 fw-bold">Why Choose SokoHub?</h2>
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <div class="card p-4 shadow-sm h-100">
+                    <h4 class="fw-semibold">Fast Delivery</h4>
+                    <p>Quick deliveries right to your doorstep.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card p-4 shadow-sm h-100">
+                    <h4 class="fw-semibold">Secure Payments</h4>
+                    <p>All payments protected with latest security systems.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card p-4 shadow-sm h-100">
+                    <h4 class="fw-semibold">Quality Products</h4>
+                    <p>We offer products only from trusted vendors.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section id="categories" class="py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="mb-4 fw-bold">Popular Categories</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card p-4 shadow-sm">Electronics
+                <img src="{% static 'products/images/electronic.jpg' %}" alt="Electronics" class="img-fluid mt-2">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-4 shadow-sm">Fashion
+                <img src="{% static 'products/images/fashion.jpg' %}" alt="Fashion" class="img-fluid mt-2">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-4 shadow-sm">Home & Living
+                <img src="{% static 'products/images/homes.jpg' %}" alt="Home & Living" class="img-fluid mt-2">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-4 shadow-sm">Groceries
+                <img src="{% static 'products/images/groceries.jpg' %}" alt="Groceries" class="img-fluid mt-2">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

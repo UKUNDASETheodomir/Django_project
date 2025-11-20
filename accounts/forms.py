@@ -11,13 +11,13 @@ class RegisterForm(UserCreationForm):
         ('V', 'Vendor'),
       )
     
-    # Override user_type field as a ChoiceField with a dropdown
+    
     user_type = forms.ChoiceField(
-        choices=USER_TYPE_CHOICES,       # The options the user can select
-        widget=forms.Select(attrs={      # Use a dropdown select
-            'class': 'form-select',     # Bootstrap class for styling
+        choices=USER_TYPE_CHOICES,       
+        widget=forms.Select(attrs={      
+            'class': 'form-select',     
         }),
-        required=True                   # Make this field mandatory
+        required=True                   
     )
     password1 = forms.CharField(
         label="Password",
@@ -27,7 +27,7 @@ class RegisterForm(UserCreationForm):
         })
     )
 
-    # Override password2 with placeholder and Bootstrap class
+    
     password2 = forms.CharField(
         label="Confirm Password",
         widget=forms.PasswordInput(attrs={

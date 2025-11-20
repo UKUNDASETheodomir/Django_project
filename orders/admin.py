@@ -1,6 +1,11 @@
 from django.contrib import admin
 from .models import Order, OrderItem
 
+
+class Adminorder(admin.ModelAdmin):
+    display_list = (' total', 'status', 'created_at')
+    search_list = ('name')
+    list_filter = ('status', 'created_at')
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'total', 'status', 'created_at')

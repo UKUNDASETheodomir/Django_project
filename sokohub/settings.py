@@ -57,11 +57,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'sokohub.urls'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-STATIC_URL = '/static/'
+STATIC_URL = '/statics/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # For production (collectstatic)
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',]
+    BASE_DIR / 'statics',]
     
 TEMPLATES = [
     {
