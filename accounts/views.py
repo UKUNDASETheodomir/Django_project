@@ -2,6 +2,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
+
+from accounts.models import CustomUser
+from orders.models import Order, OrderItem
 from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from products.models import product
@@ -15,7 +18,7 @@ def register_view(request):
             user=form.save()
             login(request, user)
             messages.success(request, "Account created successfully!")
-            return redirect("dashboard")  
+            return redirect("login")  
     else:
         form = RegisterForm()
 
@@ -32,9 +35,9 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("dashboard")  # change to your homepage
+            return redirect("dashboard")  #
         else:
-            messages.error(request, "Invalid username or password")
+            messages.info(request, "Invalid username or password")
 
     return render(request, "accounts/login.html")
 
@@ -50,7 +53,14 @@ def dashboard(request):
 
 @login_required
 def vendor_dashboard(request):
-    return render(request, 'accounts/vendor_dashboard.html')
+    ordereditems = OrderItem.objects.all().count()
+    products = product.objects.all().count()
+    activeprod = product.objects.filter(status='available').count()
+    unactive = product.objects.filter(status = "unavailable").count()
+    orders = Order.objects.all().count()
+    customers = CustomUser.objects.all().count()
+    context = {"customers":customers,"orders":orders,"products":products,"activeprod":activeprod,"unactive":unactive}
+    return render(request, 'accounts/vendor_dashboard.html',context)
 @login_required
 def product_list(request):
     products = product.objects.all()

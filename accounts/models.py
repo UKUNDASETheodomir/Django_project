@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
         ('C','Customer'),
        
     ]
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
     location = models.CharField(max_length=255)
     user_type= models.CharField(max_length = 150,choices= USER_CHOICE, default= USER_CHOICE_CUSTOMER)
  

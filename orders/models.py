@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from products.models import product
+
 class Order(models.Model):
     
     STATUS_CHOICE = [
@@ -10,14 +11,14 @@ class Order(models.Model):
     ]
     
     customer = models.ForeignKey('accounts.CustomUser',on_delete = models.CASCADE)
-    phone = models.IntegerField()
+    phone = models.CharField( max_length=50)
     delivery_address = models.PositiveBigIntegerField()
     created_at  = models.DateTimeField(auto_now_add=True)
     status= models.CharField(max_length=255,choices = STATUS_CHOICE)
     total = models.IntegerField()
 
     def __str__(self):
-        return f"Order #{self.id} - {self.customer.get_full_name()}"
+        return f"Order {self.customer.username}"
 
       
 
