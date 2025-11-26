@@ -1,212 +1,110 @@
 {% extends 'accounts/base.html' %}
-
-{% block title %}Login - SokoHub{% endblock %}
-
 {% block content %}
-<style>
-    .sokohub-root{
-    --bg:#0f1724;
-    --card:#0b1220;
-    --primary:#06b6d4;
-    --accent:#8b5cf6;
-    --muted:#94a3b8;
-    --glass: rgba(255,255,255,0.06);
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <style>body,
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			background: #7abecc !important;
+		}
+		.user_card {
+			width: 350px;
+			margin-top: auto;
+			margin-bottom: auto;
+			background: #74cfbf;
+			position: relative;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			padding: 10px;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			border-radius: 5px;
 
-    box-sizing:border-box;
-    min-height:100%;
-    margin:0;
-    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background:linear-gradient(180deg,#071024 0%, #071428 40%, #081827 100%);
-    color:#e6eef8;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    line-height:1.45;
-    padding:0;
-}
+		}
 
-/* ensure children inherit box-sizing without affecting the rest of the site */
-.sokohub-root *{box-sizing:inherit}
+		.form_container {
+			margin-top: 20px;
+		}
 
-/* NAVBAR */
-.sokohub-root .navbar{
-    position:sticky;
-    top:0;
-    z-index:50;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:1rem;
-    padding:0.8rem 1.25rem;
-    background:linear-gradient(180deg, rgba(6,11,20,0.55), rgba(6,11,20,0.35));
-    backdrop-filter: blur(8px);
-    border-bottom:1px solid rgba(255,255,255,0.03);
-    box-shadow:0 6px 20px rgba(2,6,23,0.6);
-}
+		#form-title{
+			color: #fff;
+			
+		}
 
-/* Brand */
-.sokohub-root .navbar .brand{
-    display:flex;
-    align-items:center;
-    gap:0.75rem;
-    text-decoration:none;
-    color:var(--primary);
-}
-.sokohub-root .navbar .brand .logo{
-    font-weight:700;
-    font-size:1.15rem;
-    letter-spacing:0.6px;
-    display:inline-block;
-    padding:0.25rem 0.5rem;
-    border-radius:8px;
-    background:linear-gradient(90deg, rgba(6,182,212,0.12), rgba(139,92,246,0.08));
-}
+		.login_btn {
+			width: 100%;
+			background: #33ccff !important;
+			color: white !important;
+		}
+		.login_btn:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+		.login_container {
+			padding: 0 2rem;
+		}
+		.input-group-text {
+			background: #f7ba5b !important;
+			color: white !important;
+			border: 0 !important;
+			border-radius: 0.25rem 0 0 0.25rem !important;
+		}
+		.input_user,
+		.input_pass:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
 
-/* Links */
-.sokohub-root .nav-links{
-    display:flex;
-    gap:0.5rem;
-    align-items:center;
-    list-style:none;
-    margin:0;
-    padding:0;
-}
-.sokohub-root .nav-links li a{
-    color:var(--muted);
-    text-decoration:none;
-    padding:0.5rem 0.75rem;
-    border-radius:8px;
-    transition:all 160ms ease;
-    font-weight:600;
-    font-size:0.95rem;
-}
-.sokohub-root .nav-links li a:hover,
-.sokohub-root .nav-links li a:focus{
-    color:#0a1220;
-    background:linear-gradient(90deg,var(--primary),var(--accent));
-    box-shadow:0 6px 18px rgba(7,12,26,0.45);
-    transform:translateY(-2px);
-    outline: none;
-}
+		#messages{
+			background-color: grey;
+			color: #fff;
+			padding: 10px;
+			margin-top: 10px;
+		}</style>
+	<div class="container h-100">
+		<div class="d-flex justify-content-center h-100">
+			<div class="user_card">
+				<div class="d-flex justify-content-center">
 
-/* Call to action */
-.sokohub-root .navbar .cta{
-    display:inline-flex;
-    gap:0.5rem;
-    align-items:center;
-}
-.sokohub-root .btn{
-    background:linear-gradient(90deg,var(--primary),var(--accent));
-    color:#061225;
-    padding:0.55rem 0.9rem;
-    border-radius:10px;
-    border:none;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow:0 8px 26px rgba(11,19,40,0.45);
-    transition:transform 160ms ease, box-shadow 160ms ease;
-}
-.sokohub-root .btn:hover{transform:translateY(-3px)}
+					<h3 id="form-title">LOGIN</h3>
+				</div>
+				<div class="d-flex justify-content-center form_container">
+					<form method="POST" action="">
+						{% csrf_token %}
+						<div class="input-group mb-3">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-user"></i></span>
+							</div>
+							<input type="text" name="username" placeholder="Username..." class="form-control">
+						</div>
+						<div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-key"></i></span>
+							</div>
+								<input type="password" name="password" placeholder="Password..." class="form-control" >
+						</div>
 
-/* Mobile toggle (requires matching HTML input/button) */
-.sokohub-root .nav-toggle{
-    display:none;
-    background:transparent;
-    border:1px solid rgba(255,255,255,0.06);
-    padding:0.45rem;
-    border-radius:8px;
-    color:var(--muted);
-    cursor:pointer;
-}
-@media (max-width:900px){
-    .sokohub-root .nav-links{
-        position:absolute;
-        left:0;
-        right:0;
-        top:64px;
-        display:flex;
-        flex-direction:column;
-        background:linear-gradient(180deg, rgba(6,11,20,0.95), rgba(6,11,20,0.98));
-        padding:0.75rem;
-        border-bottom-left-radius:12px;
-        border-bottom-right-radius:12px;
-        gap:0.35rem;
-        max-height:0;
-        overflow:hidden;
-        transition:max-height 260ms cubic-bezier(.2,.9,.2,1);
-    }
-    .sokohub-root .nav-links.open{max-height:520px}
-    .sokohub-root .nav-toggle{display:inline-flex}
-    .sokohub-root .navbar{padding:0.65rem 0.9rem}
-}
+							<div class="d-flex justify-content-center mt-3 login_container">
+				 				<input class="btn login_btn" type="submit" value="Login">
+				   			</div>
+					</form>
 
-/* Footer */
-.sokohub-root .site-footer{
-    position:relative;
-    margin-top:4rem;
-    padding:3.25rem 2rem;
-    background:linear-gradient(180deg,#020617 0%, rgba(6,11,20,0.9) 100%);
-    color:var(--muted);
-    border-top:1px solid rgba(255,255,255,0.03);
-    overflow:hidden;
-}
-.sokohub-root .site-footer::before{
-    content:"";
-    position:absolute;
-    left:0;
-    right:0;
-    top:-36px;
-    height:48px;
-    transform:skewY(-2deg);
-    background:linear-gradient(90deg,var(--primary),var(--accent));
-    opacity:0.06;
-    pointer-events:none;
-}
-
-/* Footer grid */
-.sokohub-root .footer-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:1.25rem;
-    align-items:start;
-}
-.sokohub-root .footer-brand{color:#dff7fb;font-weight:700;font-size:1.05rem;display:flex;flex-direction:column;gap:0.6rem}
-.sokohub-root .footer-brand p{max-width:36ch;color:var(--muted);margin:0}
-
-/* Links and socials */
-.sokohub-root .footer-links ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.5rem}
-.sokohub-root .footer-links a{color:var(--muted);text-decoration:none;padding:0.35rem 0.55rem;border-radius:8px;display:inline-block;transition:all 160ms ease}
-.sokohub-root .footer-links a:hover{color:#fff;background:rgba(255,255,255,0.03);transform:translateX(4px)}
-
-.sokohub-root .socials{display:flex;gap:0.5rem;margin-top:0.4rem}
-.sokohub-root .socials a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.03);color:var(--muted);text-decoration:none;transition:transform 160ms, background 160ms}
-.sokohub-root .socials a:hover{transform:translateY(-4px) scale(1.03);background:linear-gradient(90deg,var(--primary),var(--accent));color:#041220;box-shadow:0 12px 30px rgba(7,12,26,0.55)}
-
-.sokohub-root .newsletter{display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem}
-.sokohub-root .newsletter input[type="email"]{flex:1;background:var(--card);border:1px solid rgba(255,255,255,0.03);padding:0.6rem 0.75rem;border-radius:10px;color:var(--muted)}
-.sokohub-root .newsletter button{padding:0.6rem 0.9rem;border-radius:10px;border:none;background:linear-gradient(90deg,var(--primary),var(--accent));color:#041225;font-weight:700;cursor:pointer}
-
-/* Footer bottom */
-.sokohub-root .footer-bottom{margin-top:1.8rem;border-top:1px solid rgba(255,255,255,0.03);padding-top:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;color:rgba(255,255,255,0.45);font-size:0.9rem}
-@media (max-width:900px){
-    .sokohub-root .footer-grid{grid-template-columns:1fr;gap:1rem}
-    .sokohub-root .footer-bottom{flex-direction:column;gap:0.6rem;align-items:flex-start}
-}
-
-/* Utility */
-.sokohub-root .container{max-width:1200px;margin:0 auto;padding:0 1rem}
-
-</style>
-<h2>Login</h2>
-<form method="POST" class="mt-3">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label>Username</label>
-        <input type="text" name="username" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label>Password</label>
-        <input type="password" name="password" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-success">Login</button>
-</form>
-{% endblock %}
+				</div>
+		       {% for message in messages %}
+                      <p id="messages">{{ message }}</p>
+                       {% endfor %}
+				<div class="mt-4">
+					<div class="d-flex justify-content-center links">
+						Don't have an account? <a href="{% url 'register' %}" class="ml-2">Sign Up</a>
+					</div>
+			
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %} 

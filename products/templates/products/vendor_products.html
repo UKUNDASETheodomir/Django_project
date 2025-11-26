@@ -15,7 +15,7 @@
                 <p class="mb-0" style="color:#6B7280;">Manage your product inventory · 6 products</p>
             </div>
 
-            <a href="#" class="btn text-white mt-3 mt-md-0" 
+            <a href="{% url 'create_product' %}" class="btn text-white mt-3 mt-md-0" 
                style="background:#2563EB; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                 <i class="bi bi-plus-lg"></i> Add New Product
             </a>
@@ -25,7 +25,6 @@
         <div class="card border-0 shadow-sm" style="border-radius: 12px;">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead style="background:#F9FAFB;">
                         <tr>
                             <th>Image</th>
                             <th>Product Name</th>
@@ -33,121 +32,35 @@
                             <th>Stock</th>
                             <th>Status</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                  
+                {% for product  in products  %}
 
-                        <!-- Product Row Template -->
-                        <!-- 1 -->
                         <tr class="product-row">
                             <td>
-                                <img src="https://via.placeholder.com/56" class="product-img">
+                                <img src="/media/{{product.image}}" class="product-img">
                             </td>
-                            <td class="fw-semibold" style="color:#111827;">Wireless Bluetooth Headphones</td>
-                            <td style="color:#111827;">$79.99</td>
+                            <td class="fw-semibold" style="color:#111827;">{{product.name}}</td>
+                            <td style="color:#111827;">${{product.price}}</td>
                             <td>
                                 <!-- Good Stock -->
                                 <span class="stock-pill good-stock">
-                                    <span class="dot"></span> 45 units
+                                    <span class="dot"></span> {{product.stock}} units
                                 </span>
                             </td>
                             <td>
-                                <span class="status-badge active-badge">Active</span>
+                                <span class="status-badge active-badge">{{product.status}}</span>
                             </td>
                         </tr>
-
-                        <!-- 2 -->
-                        <tr class="product-row">
-                            <td><img src="https://via.placeholder.com/56" class="product-img"></td>
-                            <td class="fw-semibold" style="color:#111827;">Smart Watch Series 5</td>
-                            <td style="color:#111827;">$299.99</td>
-                            <td>
-                                <!-- Low Stock -->
-                                <span class="stock-pill low-stock">
-                                    <span class="dot"></span> 12 units
-                                </span>
-                            </td>
-                            <td><span class="status-badge active-badge">Active</span></td>
-                        </tr>
-
-                        <!-- 3 -->
-                        <tr class="product-row">
-                            <td><img src="https://via.placeholder.com/56" class="product-img"></td>
-                            <td class="fw-semibold" style="color:#111827;">Leather Wallet - Brown</td>
-                            <td style="color:#111827;">$45.00</td>
-                            <td>
-                                <!-- Out of Stock -->
-                                <span class="stock-pill out-stock">
-                                    <span class="dot"></span> 0 units
-                                </span>
-                            </td>
-                            <td><span class="status-badge active-badge">Active</span></td>
-                        </tr>
-
-                        <!-- 4 -->
-                        <tr class="product-row">
-                            <td><img src="https://via.placeholder.com/56" class="product-img"></td>
-                            <td class="fw-semibold" style="color:#111827;">USB-C Charging Cable</td>
-                            <td style="color:#111827;">$19.99</td>
-                            <td>
-                                <span class="stock-pill good-stock">
-                                    <span class="dot"></span> 150 units
-                                </span>
-                            </td>
-                            <td><span class="status-badge active-badge">Active</span></td>
-                        </tr>
-
-                        <!-- 5 -->
-                        <tr class="product-row">
-                            <td><img src="https://via.placeholder.com/56" class="product-img"></td>
-                            <td class="fw-semibold" style="color:#111827;">Portable Phone Stand</td>
-                            <td style="color:#111827;">$24.99</td>
-                            <td>
-                                <span class="stock-pill out-stock">
-                                    <span class="dot"></span> 0 units
-                                </span>
-                            </td>
-                            <td><span class="status-badge inactive-badge">Inactive</span></td>
-                        </tr>
-
-                        <!-- 6 -->
-                        <tr class="product-row">
-                            <td><img src="https://via.placeholder.com/56" class="product-img"></td>
-                            <td class="fw-semibold" style="color:#111827;">Wireless Mouse</td>
-                            <td style="color:#111827;">$34.99</td>
-                            <td>
-                                <span class="stock-pill good-stock">
-                                    <span class="dot"></span> 67 units
-                                </span>
-                            </td>
-                            <td><span class="status-badge active-badge">Active</span></td>
-                        </tr>
-
-                    </tbody>
+                    {% endfor %}
+                      
+                       
                 </table>
             </div>
         </div>
-
-        <!-- EMPTY STATE (Use when no products)
-        <div class="text-center py-5">
-            <div class="mx-auto mb-3" 
-                style="width:90px;height:90px;background:#EFF6FF;border-radius:50%;
-                       display:flex;align-items:center;justify-content:center;">
-                <i class='bi bi-box-seam' style="font-size:40px;color:#2563EB;"></i>
-            </div>
-            <h4 class="fw-bold" style="color:#111827;">No products yet</h4>
-            <p style="color:#6B7280;">Get started by adding your first product to your inventory</p>
-            <a href="#" class="btn text-white" 
-               style="background:#2563EB;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-               <i class="bi bi-plus-lg"></i> Add New Product
-            </a>
-        </div>
-        -->
-
     </div>
 </div>
 
 
-<!-- INLINE CUSTOM CSS -->
 <style>
     .product-img {
         width: 56px;

@@ -4,5 +4,5 @@ from .models import*
 def vendorOrder(request):
     orders = Order.objects.all()
     ordersitems = OrderItem.objects.all()
-    context = {}
-    render("vend_order.html",context)
+    context = {"orders":orders,"items":ordersitems}
+    return render(request, "vend_order.html", context)

@@ -1,3 +1,6 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+
 <h2>Available Products</h2>
 
 {% for item in products %}
@@ -12,3 +15,4 @@
 {% empty %}
 <p>No products available.</p>
 {% endfor %}
+{% endblock content %}

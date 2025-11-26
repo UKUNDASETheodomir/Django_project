@@ -1,14 +1,5 @@
-
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
 
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser
+from .models import *
 
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('phone_number', 'location', 'user_type')}),
-    )
-
-
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(CustomUser) 

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProductForm
 from .models import product
 
-@login_required
+@login_required(login_url='login')
 def create_product(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
@@ -20,16 +20,20 @@ def create_product(request):
     return render(request, "products/create_product.html", {"form": form})
 
 
-@login_required
+@login_required(login_url='login')
+# @require_vendor
 def vendor_products(request):
-    products = product.objects.filter(vendor=request.user)
-    return render(request, "products/vendor_products.html", {"products": products})
-def product_list(request):
-    # Show only active products
-    products = product.objects.filter(status='active')
+    products = product.objects.filter(vendor = request.user)
+    context = {"products": products}
+    return render(request, "products/vendor_products.html",context)
 
+@login_required(login_url='login')
+# @require_customer
+def product_list(request,id):
+    products = product.objects.filter(status='active')
     return render(request, 'products/product_list.html', {'products': products})
-@login_required
+@login_required(login_url='login')
+# @require_vendor
 def create_product(request):
     if request.user.user_type != 'V':
         return redirect('home')
