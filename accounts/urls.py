@@ -15,6 +15,7 @@ urlpatterns = [
     path('products/<int:id>/', product_detail, name='product_detail'),
     path('user/', userPage, name='user'),
     path('orders/', vendorOrder, name='vendor_orders'),
+    path('home_page/', HomePage, name='home_page'),
 
 ]
 

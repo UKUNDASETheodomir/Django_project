@@ -67,7 +67,7 @@ def dashboard(request):
     return render(request, "accounts/dashboard.html")
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['vendor'])
+@allowed_users(allowed_roles=['staff','vendor'])
 def vendor_dashboard(request):
     products = product.objects.all()
     total_pro = products.count()
@@ -80,7 +80,7 @@ def vendor_dashboard(request):
     return render(request,'accounts/vendor_dashboard.html',context)
 
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['customer'])
+@allowed_users(allowed_roles=['customer'])
 def product_list(request):
     products = product.objects.all()
     return render(request, 'accounts/product_list.html', {'products': products})
@@ -89,5 +89,11 @@ def product_detail(request, id):
     prod = get_object_or_404(product, id=id)
     return render(request, 'accounts/product_detail.html', {'product': prod}) 
 
-def userPage():
+@login_required(login_url='login')
+# @allowed_users(allowed_roles=['customer'])
+def userPage(request):
     return render(request, 'accounts/user.html')
+
+
+def HomePage(request):
+    return render(request, 'accounts/home_page.html')

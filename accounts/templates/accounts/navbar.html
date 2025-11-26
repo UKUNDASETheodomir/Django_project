@@ -1,8 +1,14 @@
 <style>
-  .msg{
+  .msg {
     font-size: 16px;
     color: black;
     margin-right: 15px;
+  }
+
+  /* Optional: make active link have same style as hover */
+  .nav-link.active {
+    color: #0d6efd !important; /* Bootstrap primary color */
+    font-weight: 600;
   }
 </style>
 
@@ -18,28 +24,37 @@
     <div class="collapse navbar-collapse" id="navbarNav">
 
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item ">
-          <a class="nav-link" href="{% url 'home' %}">Home</a>
+        {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+             href="{% url 'home' %}">Home</a>
         </li>
-        {% if request.user.is_customer %}
+        {% endif %}
 
-        <li class="nav-item ">
-          <a class="nav-link" href="{% url 'product_list' %}">Products</a>
+        {% if request.user.is_customer %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" 
+             href="{% url 'product_list' %}">Products</a>
         </li>
-            <li class="nav-item ">
-                <a class="nav-link">My Orders</a>
-              </li>
-              {% endif %}
-              {% if request.user.is_staff %}
-              <li class="nav-item ">
-                <a class="nav-link" href="{% url 'vendor_dashboard' %}">Dashboard</a>
-              </li>
-              <li class="nav-item ">
-                <a class="nav-link" href="{% url 'vendor_products' %}">My Products</a>
-              </li>
-              <li class="nav-item ">
-                <a class="nav-link" href="{% url 'vendor_orders' %}">Orders</a>
-              </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'customer_orders' %}active{% endif %}" 
+             href="{% url 'customer_orders' %}">My Orders</a>
+        </li>
+        {% endif %}
+
+        {% if request.user.is_staff %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'vendor_dashboard' %}active{% endif %}" 
+             href="{% url 'vendor_dashboard' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'vendor_products' %}active{% endif %}" 
+             href="{% url 'vendor_products' %}">My Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'vendor_orders' %}active{% endif %}" 
+             href="{% url 'vendor_orders' %}">Orders</a>
+        </li>
         {% endif %}
       </ul>
 
@@ -52,11 +67,22 @@
             <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">Logout</a>
           </li>
         {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Login</a>
+      
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home_page' %}active{% endif %}" 
+               href="{% url 'home_page' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Register</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" 
+               href="{% url 'product_list' %}">Products</a>
+          </li>
+           <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" 
+               href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" 
+               href="{% url 'register' %}">Register</a>
           </li>
         {% endif %}
       </ul>
