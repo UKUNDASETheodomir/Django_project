@@ -1,21 +1,22 @@
 {% extends "accounts/base.html" %}
 
-{% block content %}     
+{% block content %} 
+<style>
+    #orders-card {
+        display: flex !important;
+        justify-content: center;                
+        border-radius: 8px;
+        align-items: center;
+        gap: 20px;
+    }  
+</style>     
 
 <div class="row mb-4">
-    <div class="col-md-4">
+    <div id="orders-card">
         <div class="card card-body bg-primary text-white">
-            <h5>Orders</h5>
+            </h3> My Orders</h3>
             <h3>{{ orders|length }}</h3>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-body bg-success text-white">
-            <h5>Customers</h5>
-            <h3>{{ customers|length }}</h3>
-        </div>
-    </div>
-    <div class="col-md-4">
         <div class="card card-body bg-info text-white">
             <h5>Products</h5>
             <h3>{{ products|length }}</h3>
@@ -25,37 +26,11 @@
 </div>
 
 <div class="row">
-
-    <!-- Customers Section -->
-    <div class="col-md-5">
-        <h3>Customers</h3>
-        <hr>
-        <a class="btn btn-primary btn-sm btn-block" href="#">Create customers</a>
-
-        <table class="table">
-            <tr>
-              
-                <th>Customers</th>
-                <th>phone</th>
-            </tr>
-          <tr>
-            {% for customer in customers %}
-            <tr>
-               <td>{{ customer.name }}</td>
-               <td>{{ customer.phone }} </td>
-            </tr>
-            {% endfor %}
-          </tr>
-        </table>
-    </div>
-
-   
     <div class="col-md-7">
         <h3>Recent Orders</h3>
         <hr>
         <a class="btn btn-primary btn-sm btn-block" href="#">Create orders</a>
 
-        <!-- FIX: Added missing closing quote -->
         <div class="card card-body">
 
             <table class="table table-sm">
@@ -71,14 +46,12 @@
                     <td>{{ order.product.name }}</td>
                     <td>{{ order.order_date }}</td>
                     <td>{{ order.status }}</td>
-                    <td><a class="btn btn-info btn-sm" href="#">Update</a></td>
-                    <td><a class="btn btn-danger btn-sm" href="#">Delete</a></td>   
                 </tr>
                 {% endfor %}
             </table>
         </div>
     </div>
-
+ <a href="#"> <p>view more orders...</p></a>
 </div>
 
  {% endblock %}

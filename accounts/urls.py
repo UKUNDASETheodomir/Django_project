@@ -1,5 +1,5 @@
 from django.urls import path
-from orders.views import vendorOrder
+from orders.views import customerOrder, vendorOrder
 from products.views import create_product
 from .views import *
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('products/<int:id>/', product_detail, name='product_detail'),
     path('user/', userPage, name='user'),
     path('orders/', vendorOrder, name='vendor_orders'),
+    path('customer_orders/', customerOrder, name='customer_orders'),
     path('home_page/', HomePage, name='home_page'),
 
 ]

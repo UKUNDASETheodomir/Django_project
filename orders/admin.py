@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Order, OrderItem
+from .models import*
 
 
 class Adminorder(admin.ModelAdmin):

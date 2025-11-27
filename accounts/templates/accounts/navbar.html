@@ -1,7 +1,16 @@
+{% load static %}
+{% block content %}
+
 <style>
+  .navbar{
+    background-color: #fff !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: start;
+  }
   .msg {
     font-size: 16px;
-    color: black;
+    color: black !important;
     margin-right: 15px;
   }
 
@@ -14,7 +23,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm py-2">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#">SokoHub</a>
+    <a class="navbar-brand   fs-lg " href="#">SokoHub</a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,48 +32,49 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
 
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        {% if request.user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
-             href="{% url 'home' %}">Home</a>
-        </li>
-        {% endif %}
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
-        {% if request.user.is_customer %}
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" 
-             href="{% url 'product_list' %}">Products</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'customer_orders' %}active{% endif %}" 
-             href="{% url 'customer_orders' %}">My Orders</a>
-        </li>
-        {% endif %}
-
-        {% if request.user.is_staff %}
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'vendor_dashboard' %}active{% endif %}" 
-             href="{% url 'vendor_dashboard' %}">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'vendor_products' %}active{% endif %}" 
-             href="{% url 'vendor_products' %}">My Products</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'vendor_orders' %}active{% endif %}" 
-             href="{% url 'vendor_orders' %}">Orders</a>
-        </li>
-        {% endif %}
-      </ul>
 
       <ul class="navbar-nav mb-2 mb-lg-0">
+        
         {% if request.user.is_authenticated %}
-          <li class="nav-item">
+         
+              {% if request.user.user_type == 'V' %}
+        <li class="nav-item">
+          <a class="nav-link" 
+          href="{% url 'vendor_dashboard' %}">Dashboard</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link " 
+             href="{% url 'vendor_products' %}">My Products</a>
+        </li> 
+        <li class="nav-item">
+          <a class="nav-link " 
+             href="{% url 'vendor_orders' %}">Orders</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link " 
+             href="{% url 'home' %}">Home</a>  
+               </li>
+
+               <li class="nav-item">
+          <a class="nav-link " 
+             href="{% url 'product_list' %}">Products</a>  
+               </li><li class="nav-item">
+          <a class="nav-link " 
+             href="{% url 'customer_orders' %}">My orders</a>  
+               </li>
+
+      </ul>
+        
+        {% endif %}
+         <li class="nav-item">
             <span class="nav-link msg">Hi, {{ request.user.username }}</span>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">Logout</a>
+            <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">Logout</a> 
           </li>
         {% else %}
       
@@ -90,3 +100,4 @@
     </div>
   </div>
 </nav>
+{% endblock content %}

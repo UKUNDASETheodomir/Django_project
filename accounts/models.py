@@ -17,5 +17,5 @@ class CustomUser(AbstractUser):
     user_type= models.CharField(max_length = 150,choices= USER_CHOICE, default= USER_CHOICE_CUSTOMER)
  
 def __str__(self):
-        return self.username
+        return self.username 
 

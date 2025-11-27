@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+
+
+from accounts.decorators import vendor_required, customer_required  
 from .forms import ProductForm
 from .models import product
 
@@ -21,19 +24,18 @@ def create_product(request):
 
 
 @login_required(login_url='login')
-# @require_vendor
+@vendor_required
 def vendor_products(request):
     products = product.objects.filter(vendor = request.user)
     context = {"products": products}
     return render(request, "products/vendor_products.html",context)
 
-@login_required(login_url='login')
-# @require_customer
+# @login_required(login_url='login')
+
 def product_list(request,id):
     products = product.objects.filter(status='active')
     return render(request, 'products/product_list.html', {'products': products})
 @login_required(login_url='login')
-# @require_vendor
 def create_product(request):
     if request.user.user_type != 'V':
         return redirect('home')

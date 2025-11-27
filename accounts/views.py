@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from accounts.models import CustomUser
-from .decorators import allowed_users, unauthenticated_user,require_vendor
+from .decorators import  vendor_required, customer_required
 from orders.models import Order, OrderItem
 from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
@@ -18,24 +18,31 @@ from .forms import RegisterForm
 from django.contrib.auth.models import Group
 
 
-@unauthenticated_user
 def register_view(request):
-    form = RegisterForm()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user =  form.save()
-            username = form.cleaned_data.get('username')
-            group = Group.objects.get(name = 'customer')
-            user.groups.add(group )
-            messages.success(request, f"Account created for {username} successfully! Please login.")
-            return redirect('login')
+            user = form.save(commit=False)
+
+            user_type = form.cleaned_data.get('user_type')
+            user.user_type = user_type
+            user.save()
+
+            if user_type == 'C':
+                group = Group.objects.get(name='customer')
+            else:
+                group = Group.objects.get(name='vendor')
+
+            user.groups.add(group)
+
+            messages.success(request, f"Account created successfully! Please login.")
+            return redirect('home')
     else:
         form = RegisterForm()
 
     return render(request, "accounts/register.html", {"form": form})
 
-@unauthenticated_user
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -56,18 +63,16 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
-@login_required(login_url='login')
-# @allowed_users(allowed_roles=['vendor'])
-# @require_vendor 
 def home_view(request):
     return render(request, "accounts/home.html")
 
+# @allowed_users(allowed_roles=['vendor'])
 @login_required(login_url='login')
 def dashboard(request):
     return render(request, "accounts/dashboard.html")
 
-@login_required(login_url='login')
-@allowed_users(allowed_roles=['staff','vendor'])
+
+@vendor_required
 def vendor_dashboard(request):
     products = product.objects.all()
     total_pro = products.count()
@@ -80,7 +85,6 @@ def vendor_dashboard(request):
     return render(request,'accounts/vendor_dashboard.html',context)
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['customer'])
 def product_list(request):
     products = product.objects.all()
     return render(request, 'accounts/product_list.html', {'products': products})
