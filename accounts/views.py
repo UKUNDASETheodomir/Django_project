@@ -35,8 +35,9 @@ def register_view(request):
 
             user.groups.add(group)
 
-            messages.success(request, f"Account created successfully! Please login.")
-            return redirect('home')
+            messages.success(request, f"Account created successfully")
+            login(request, user)
+            return redirect("dashboard")
     else:
         form = RegisterForm()
 
@@ -74,14 +75,21 @@ def dashboard(request):
 
 @vendor_required
 def vendor_dashboard(request):
-    products = product.objects.all()
-    total_pro = products.count()
-    av_pro = product.objects.filter(status='available').count()
-    unav_pro = product.objects.filter(status='unavailable').count()
-    act_order = Order.objects.filter(status='active')
-    paid_order = Order.objects.filter(status='paid')
+    # Get all products for the current vendor
+    vendor_products = product.objects.filter(vendor=request.user)
+
+    # Order them by the 'created_at' field to get the most recent ones first
+    recent_products = vendor_products.order_by('-created_at')
+
+    # Calculate statistics based only on the vendor's products
+    total_pro = vendor_products.count()
+    unav_pro = vendor_products.filter(status='unavailable').count()
+    
+    # TODO: Filter orders based on the vendor's products for accurate stats
+    act_order = Order.objects.filter(status='active').count()
     pend_order = Order.objects.filter(status='pending').count()
-    context = {"products":products,'total':total_pro,"available":av_pro,"pending":pend_order,'unvailable':unav_pro}
+
+    context = {"products": recent_products, 'total_pro': total_pro, "act_order": act_order, "pend_order": pend_order, 'unav_pro': unav_pro}
     return render(request,'accounts/vendor_dashboard.html',context)
 
 @login_required(login_url='login')

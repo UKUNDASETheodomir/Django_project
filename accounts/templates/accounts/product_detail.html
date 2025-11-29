@@ -19,7 +19,8 @@
                     <p class="card-text"><strong>Status:</strong> {{ product.status|title }}</p>
 
                     {% if product.stock > 0 %}
-                        <button class="btn btn-success">Place order</button>
+                        <a href="{% url 'customer_orders' %}" ><button class="btn btn-success">Place order</button></a>
+                        
                     {% else %}
                         <button class="btn btn-secondary" disabled>Out of Stock</button>
                     {% endif %}
