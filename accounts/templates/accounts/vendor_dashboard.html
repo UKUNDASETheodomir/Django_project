@@ -140,13 +140,12 @@
     <div class="d-flex flex-wrap gap-3 mb-5 ">
         <a href="{% url 'create_product' %}" class="btn text-white px-4 py-3 shadow" style="background:#2563eb; text-decoration: none;"><i class="bi bi-plus-lg me-2"></i> Add New Product</a>
 
-        <button class="btn btn-outline-secondary px-4 py-3">
+        {% comment %} <button class="btn btn-outline-secondary px-4 py-3">
             View All Products
-        </button>
+        </button> {% endcomment %}
+        <a href="{% url 'vendor_products' %}" class="btn text-white px-4 py-3 shadow" style="background:#2563eb; text-decoration: none;"><i class="bi bi-plus-lg me-2"></i>View All Products</a>
 
-        <button class="btn btn-outline-secondary px-4 py-3">
-             <a href="#" style="text-decoration: none; color: inherit;">View Orders</a>
-        </button>
+       <a href="{% url 'vendor_orders' %}" class="btn text-white px-4 py-3 shadow" style="background:#2563eb; text-decoration: none;"><i class="bi bi-plus-lg me-2"></i>View orders</a>
     </div>
 
     <!-- RECENT PRODUCTS -->
