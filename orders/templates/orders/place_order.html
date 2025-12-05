@@ -1,0 +1,41 @@
+{% extends "accounts/base.html" %}
+{% block title %}Place Order{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow-sm" style="width: 500px;">
+        <div class="card-body">
+
+            <h3 class="text-center mb-3">Place Order</h3>
+
+            <h5 class="text-center text-primary">{{ product.name }}</h5>
+            <p class="text-center">Price: <strong>${{ product.price }}</strong></p>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" name="quantity" min="1" value="1"
+                           class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.phone.label }}</label>
+                    {{ form.phone }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ form.delivery_address.label }}</label>
+                    {{ form.delivery_address }}
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mt-3">
+                    Confirm Order
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

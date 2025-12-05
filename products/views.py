@@ -51,4 +51,3 @@ def create_product(request):
         form = ProductForm()
 
     return render(request, 'products/create_product.html', {'form': form})
-

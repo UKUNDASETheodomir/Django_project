@@ -1,0 +1,36 @@
+{% extends "accounts/base.html" %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">My Orders</h2>
+    {% if orders %}
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Placed At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>${{ order.total }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.created_at|date:"D, M d, Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'order_confirmation' order.id %}" class="btn btn-sm btn-info">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>You have not placed any orders yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
