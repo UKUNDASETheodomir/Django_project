@@ -17,7 +17,14 @@ class RegisterForm(UserCreationForm):
         widget=forms.Select(attrs={      
             'class': 'form-select',     
         }),
-        required=True                   
+        required=True   
+    )
+    
+    username = forms.CharField(required= True,      
+        widget=forms.Select(attrs={      
+            'class': 'form-select',     
+        })
+                        
     )
     password1 = forms.CharField(
         label="Password",
@@ -26,7 +33,6 @@ class RegisterForm(UserCreationForm):
             'class': 'form-control',
         })
     )
-
     
     password2 = forms.CharField(
         label="Confirm Password",
