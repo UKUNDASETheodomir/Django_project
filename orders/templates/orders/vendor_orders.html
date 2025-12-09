@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Product Orders</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container my-4">
+    {% extends 'accounts/base.html' %}
+
+   {% block title %}My Product Orders{% endblock %}
+
+     {% block content %}
+    
         <h1 class="text-center mb-3">My Product Orders</h1>
 
         {% if orders_with_totals %}
@@ -52,9 +48,5 @@
                 You have no orders for your products yet.
             </div>
         {% endif %}
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+   
+{% endblock %}

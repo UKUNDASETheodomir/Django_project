@@ -2,6 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .form import OrderForm
 from .models import Order, OrderItem
 from products.models import product
+from django.shortcuts import render
+
+from accounts.models import CustomUser
+from .models import*
 
 def place_order(request, id):
     product_obj = get_object_or_404(product,id=id)
@@ -91,3 +95,28 @@ def vendor_orders(request):
          "orders_with_totals": orders_with_totals
     }
     return render(request, "orders/vendor_orders.html", context)
+
+
+def vendorOrder(request):
+    orders=Order.objects.all()
+    customers= CustomUser.objects.all()
+    total_customers = customers.count()
+    total_orders = orders.count()
+    paid = orders.filter(status='paid').count()
+    pending = orders.filter(status='pending').count() 
+    active = orders.filter(status='active').count()  
+    context = {'orders':orders, 'customers':customers, 'total_orders': total_orders, 'paid': paid, 'pending': pending, 'active': active} 
+    return render(request, "vend_order.html", context)
+def customerOrder(request):
+    orders=Order.objects.all()
+    customers= CustomUser.objects.all()
+    total_customers = customers.count()
+    vendors= CustomUser.objects.filter(user_type='V')
+    total_vendors = vendors.count()
+    total_orders = orders.count()
+    paid = orders.filter(status='paid').count()
+    pending = orders.filter(status='pending').count() 
+    active = orders.filter(status='active').count()  
+    context = {'orders':orders, 'customers':customers, 'total_vendors': total_vendors, 'total_orders': total_orders, 'paid': paid, 'pending': pending, 'active': active} 
+    return render(request, "customer_order.html", context)
+

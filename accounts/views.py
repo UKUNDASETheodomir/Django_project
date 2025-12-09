@@ -107,5 +107,5 @@ def userPage(request):
     return render(request, 'accounts/user.html')
 
 
-def HomePage(request):
-    return render(request, 'accounts/home_page.html')
+# def HomePage(request):
+#     return render(request, 'accounts/home_page.html')
