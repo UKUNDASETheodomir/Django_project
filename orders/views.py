@@ -111,12 +111,11 @@ def customerOrder(request):
     orders=Order.objects.all()
     customers= CustomUser.objects.all()
     total_customers = customers.count()
-    vendors= CustomUser.objects.filter(user_type='V')
-    total_vendors = vendors.count()
+    customers = CustomUser.objects.filter(user_type='C')
     total_orders = orders.count()
     paid = orders.filter(status='paid').count()
     pending = orders.filter(status='pending').count() 
     active = orders.filter(status='active').count()  
-    context = {'orders':orders, 'customers':customers, 'total_vendors': total_vendors, 'total_orders': total_orders, 'paid': paid, 'pending': pending, 'active': active} 
+    context = {'orders':orders, 'customers':customers,  'total_orders': total_orders, 'paid': paid, 'pending': pending, 'active': active} 
     return render(request, "customer_order.html", context)
 

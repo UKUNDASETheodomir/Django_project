@@ -32,5 +32,6 @@
     {% else %}
     <p>You have not placed any orders yet.</p>
     {% endif %}
+    <button class="btn btn-primary mt-3" onclick="window.location.href='{% url 'product_list' %}'">Create order</button>
 </div>
 {% endblock %}
