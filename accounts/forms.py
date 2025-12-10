@@ -6,6 +6,36 @@ User = get_user_model()
 
 class RegisterForm(UserCreationForm):
     # Override password fields here, outside Meta
+      
+    username = forms.CharField(
+        label="username",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter your username',
+            'class': 'form-control',
+        })
+    )
+    location = forms.CharField(
+        label="location",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter your location',
+            'class': 'form-control',
+        })
+    )
+    phone = forms.CharField(
+        label="phone",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter your phone',
+            'class': 'form-control',
+        })
+    )
+    email = forms.CharField(
+        label="email",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter your email',
+            'class': 'form-control',
+        })
+    )
+
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={
@@ -13,7 +43,7 @@ class RegisterForm(UserCreationForm):
             'class': 'form-control',
         })
     )
-
+    
     password2 = forms.CharField(
         label="Confirm Password",
         widget=forms.PasswordInput(attrs={
