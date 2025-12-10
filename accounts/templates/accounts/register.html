@@ -11,6 +11,12 @@
 
           <form method="POST" novalidate>
             {% csrf_token %}
+            <div class="mb-3">
+              {{ form.username }}
+              {% for error in form.username.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+              </div>
 
 
             <div class="mb-3">
