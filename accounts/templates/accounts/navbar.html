@@ -2,28 +2,73 @@
 {% block content %}
 
 <style>
-  .navbar{
-    background-color: #fff !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    align-items: start;
-  }
-  .msg {
-    font-size: 16px;
-    color: black !important;
-    margin-right: 15px;
+  /* Brand Colors */
+  :root {
+      --primary-brand-color: #3BB77E;
+      --primary-brand-hover: #33a56f;
+      --dark-text: #253D4E;
+      --gray-text: #7E7E7E;
   }
 
-  /* Optional: make active link have same style as hover */
-  .nav-link.active {
-    color: #0d6efd !important; /* Bootstrap primary color */
-    font-weight: 600;
+  .navbar {
+      background-color: #fff !important;
+      display: flex !important;
+      justify-content: flex-end !important;
+      align-items: start;
+      border-bottom: 1px solid #eef0ef;
+  }
+
+  /* Navbar links */
+  .navbar .nav-link {
+    
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--dark-text) !important;
+      transition: 0.3s ease;
+      padding: 3px 5px !important;
+      border-radius: 6px;
+      margin-right: 10px;
+  }
+
+  /* Hover effect → Brand color */
+  .navbar .nav-link:hover {
+      color: #fff !important;
+      background-color: var(--primary-brand-color) !important;
+  }
+
+  /* ACTIVE STATE → Brand color */
+  .navbar .nav-link.active {
+      color: #fff !important;
+      background-color: var(--primary-brand-color) !important;
+      font-weight: 600;
+  }
+
+  /* Greeting text */
+  .msg {
+      font-size: 16px;
+      color: var(--dark-text) !important;
+      margin-right: 15px;
+      font-weight: 600;
+  }
+
+  /* Logout button in danger color */
+  .nav-link.logout {
+      font-weight: 600;
+      color: #d9534f !important;
+  }
+
+  .nav-link.logout:hover {
+      background-color: #d9534f !important;
+      color: #fff !important;
   }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm py-2">
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm py-2">
   <div class="container-fluid">
-    <a class="navbar-brand   fs-lg " href="#">SokoHub</a>
+
+    <a class="navbar-brand fs-lg fw-bold" href="#" style="color: var(--primary-brand-color);">
+      SokoHub
+    </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,70 +79,79 @@
 
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
-
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        
         {% if request.user.is_authenticated %}
-         
-              {% if request.user.user_type == 'V' %}
-        <li class="nav-item">
-          <a class="nav-link" 
-          href="{% url 'vendor_dashboard' %}">Dashboard</a>
-        </li>
-        
-        <li class="nav-item">
-          <a class="nav-link " 
-             href="{% url 'vendor_products' %}">My Products</a>
-        </li> 
-        <li class="nav-item">
-          <a class="nav-link " 
-             href="{% url 'vendor_orders' %}">Orders</a>
-        </li>
-       {% else %}
-        <li class="nav-item">
-          <a class="nav-link " 
-             href="{% url 'home' %}">Home</a>  
-               </li>
 
-               <li class="nav-item">
-          <a class="nav-link " 
-             href="{% url 'product_list' %}">Products</a>  
-               </li><li class="nav-item">
-          <a class="nav-link " 
-             href="{% url 'customer_orders' %}">My orders</a>  
-               </li>
+            {% if request.user.user_type == 'V' %}
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'vendor_dashboard' %}active{% endif %}"
+                   href="{% url 'vendor_dashboard' %}">Dashboard</a>
+              </li>
 
-      </ul>
-        
-        {% endif %}
-         <li class="nav-item">
-            <span class="nav-link msg">Hi, {{ request.user.username }}</span>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">Logout</a> 
-          </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'vendor_products' %}active{% endif %}"
+                   href="{% url 'vendor_products' %}">My Products</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'vendor_orders' %}active{% endif %}"
+                   href="{% url 'vendor_orders' %}">Orders</a>
+              </li>
+
+            {% else %}
+
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                   href="{% url 'home' %}">Home</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}"
+                   href="{% url 'product_list' %}">Products</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'customer_orders' %}active{% endif %}"
+                   href="{% url 'customer_orders' %}">My Orders</a>
+              </li>
+
+            {% endif %}
+
+            <li class="nav-item">
+              <span class="nav-link msg">Hi, {{ request.user.username }}</span>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link logout" href="{% url 'logout' %}">Logout</a>
+            </li>
+
         {% else %}
-      
-        <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                href="{% url 'home' %}">Home</a>
           </li>
+
           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" 
+            <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}"
                href="{% url 'product_list' %}">Products</a>
           </li>
-           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" 
+
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
                href="{% url 'login' %}">Login</a>
           </li>
+
           <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" 
+            <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
                href="{% url 'register' %}">Register</a>
           </li>
-        {% endif %}
-      </ul>
 
+        {% endif %}
+
+      </ul>
     </div>
+
   </div>
 </nav>
+
 {% endblock content %}

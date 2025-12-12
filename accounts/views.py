@@ -65,7 +65,8 @@ def logout_view(request):
     return redirect("login")
 
 def home_view(request):
-    return render(request, "accounts/home.html")
+    products= product.objects.all()
+    return render(request, "accounts/home.html",{'products':products})
 
 # @allowed_users(allowed_roles=['vendor'])
 @login_required(login_url='login')

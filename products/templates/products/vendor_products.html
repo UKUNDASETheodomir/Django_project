@@ -2,6 +2,9 @@
 {% block title %}My Products{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
 <div class="vendor-products-page" style="
     background: linear-gradient(to bottom, #F9FAFB, #F3F4F6);
     padding: 2rem;
@@ -16,7 +19,7 @@
             </div>
 
             <a href="{% url 'create_product' %}" class="btn text-white mt-3 mt-md-0" 
-               style="background:#2563EB; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+               style="background:#2563EB; box-shadow:0 2px 4px rgba(0,0,0,0.1); border-radius:8px;">
                 <i class="bi bi-plus-lg"></i> Add New Product
             </a>
         </div>
@@ -25,40 +28,73 @@
         <div class="card border-0 shadow-sm" style="border-radius: 12px;">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
+
+                    <thead style="background:#F3F4F6;">
                         <tr>
                             <th>Image</th>
                             <th>Product Name</th>
                             <th>Price</th>
                             <th>Stock</th>
                             <th>Status</th>
+                            <th class="text-end">Actions</th>
                         </tr>
-                  
-                {% for product  in products  %}
+                    </thead>
 
+                    <tbody>
+                    {% for product in products %}
                         <tr class="product-row">
+
                             <td>
                                 <img src="/media/{{product.image}}" class="product-img">
                             </td>
-                            <td class="fw-semibold" style="color:#111827;">{{product.name}}</td>
-                            <td style="color:#111827;">${{product.price}}</td>
+
+                            <td class="fw-semibold" style="color:#111827;">
+                                {{product.name}}
+                            </td>
+
+                            <td style="color:#111827;">
+                                ${{product.price}}
+                            </td>
+
                             <td>
-                                <!-- Good Stock -->
-                                <span class="stock-pill good-stock">
+                                <span class="stock-pill {% if product.stock <= 0 %}out-stock
+                                                        {% elif product.stock <= 5 %}low-stock
+                                                        {% else %}good-stock{% endif %}">
                                     <span class="dot"></span> {{product.stock}} units
                                 </span>
                             </td>
+
                             <td>
-                                <span class="status-badge active-badge">{{product.status}}</span>
+                                <span class="status-badge {% if product.status == 'active' %}
+                                    active-badge {% elif product.status == 'inactive' %}
+                                    inactive-badge {% else %} draft-badge {% endif %}">
+                                    {{product.status}}
+                                </span>
                             </td>
+
+                            <!-- ACTIONS -->
+                            <td class="text-end">
+                                <a href="{% url 'edit_product' product.id %}" class="action-btn edit-btn">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <a href="{% url 'delete_product' product.id %}" 
+                                   
+                                   class="action-btn delete-btn">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+
                         </tr>
                     {% endfor %}
-                      
-                       
+                    </tbody>
+
                 </table>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <style>
@@ -73,6 +109,7 @@
 
     .product-row:hover {
         background: #F9FAFB;
+        transition: 0.2s ease;
     }
 
     /* Stock Pills */
@@ -84,6 +121,7 @@
         align-items: center;
         gap: 6px;
         border: 1px solid;
+        font-weight: 500;
     }
 
     .stock-pill .dot {
@@ -129,28 +167,49 @@
         font-size: 0.85rem;
         border-radius: 12px;
         border: 1px solid;
-        display: inline-block;
+        font-weight: 500;
     }
-
     .active-badge {
         background: #F0FDF4;
         color: #15803D;
         border-color: #BBF7D0;
     }
-
     .inactive-badge {
         background: #F3F4F6;
         color: #374151;
         border-color: #E5E7EB;
     }
-
     .draft-badge {
         background: #FFFBEB;
         color: #B45309;
         border-color: #FDE68A;
     }
+
+    /* ACTION BUTTONS */
+    .action-btn {
+        padding: 6px 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        margin-left: 6px;
+        font-size: 1rem;
+        transition: 0.2s ease;
+    }
+    .edit-btn {
+        background: #DBEAFE;
+        color: #1E40AF;
+    }
+    .edit-btn:hover {
+        background: #2563EB;
+        color: white;
+    }
+    .delete-btn {
+        background: #FEE2E2;
+        color: #B91C1C;
+    }
+    .delete-btn:hover {
+        background: #DC2626;
+        color: white;
+    }
 </style>
 
-
-</table>
 {% endblock %}

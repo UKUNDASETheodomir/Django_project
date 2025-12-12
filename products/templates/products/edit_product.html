@@ -1,0 +1,16 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+
+<div class="container mt-4" style="max-width: 650px;">
+    <h2 class="mb-3">Edit Product</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button class="btn btn-primary mt-3">Update Product</button>
+        <a href="{% url 'vendor_products' %}" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

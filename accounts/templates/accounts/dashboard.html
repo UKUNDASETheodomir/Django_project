@@ -1,11 +1,233 @@
-{% extends 'accounts/base.html' %}
-
-{% block title %}Dashboard - SokoHub{% endblock %}
+{% extends "accounts/base.html" %}
+{% load static %}
 
 {% block content %}
-<h2>Welcome, {{ request.user.username }}!</h2>
-<p>You are logged in as 
-  {% if request.user.user_type == 'C' %}Customer{% elif request.user.user_type == 'V' %}Vendor{% endif %}.
-</p>
+
+<style>
+    /* --- Color Variables --- */
+    :root {
+        --primary-brand-color: #3BB77E;
+        --hover-color: #2EB875;
+        --dark-text: #253D4E;
+        --gray-text: #7E7E7E;
+    }
+
+    /* --- Global & Typography --- */
+    body {
+        background-color: #fff;
+        font-family: 'Quicksand', sans-serif;
+        color: var(--dark-text);
+    }
+
+    h1, h2, h3, h4 {
+        color: var(--dark-text);
+        font-weight: 700;
+    }
+
+    /* --- Sidebar Styling --- */
+    .nav-pill-custom {
+        border-radius: 50px;
+        padding: 12px 24px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 12px;
+        gap: 12px;
+    }
+
+    /* Active State */
+    .nav-pill-custom.active {
+        background-color: var(--primary-brand-color);
+        color: white !important;
+        box-shadow: 0 4px 6px rgba(59, 183, 126, 0.2);
+        border: 1px solid var(--primary-brand-color);
+    }
+
+    /* Inactive State */
+    .nav-pill-custom:not(.active) {
+        background-color: white;
+        border: 1px solid #dee2e6;
+        color: var(--gray-text);
+    }
+
+    /* Hover State → Matches Dashboard Color */
+    .nav-pill-custom:not(.active):hover {
+        background-color: var(--primary-brand-color);
+        color: #fff !important;
+        border-color: var(--primary-brand-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(59, 183, 126, 0.2);
+    }
+
+    .nav-pill-custom i {
+        font-size: 1.1rem;
+    }
+
+    /* --- Main Content Styling --- */
+    .dashboard-heading {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .dashboard-desc {
+        color: var(--gray-text);
+        line-height: 1.8;
+    }
+
+    .orders-chart-card {
+        border-radius: 12px;
+        border: 1px solid #ececec;
+        padding: 24px;
+    }
+</style>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="d-flex flex-column">
+
+                    <a href="#" class="nav-pill-custom">
+                        <i class="bi bi-person"></i> Profile
+                    </a>
+
+                    <a href="#" class="nav-pill-custom active">
+                        <i class="bi bi-grid-fill"></i> Dashboard
+                    </a>
+
+                    <a href="#" class="nav-pill-custom">
+                        <i class="bi bi-bag"></i> Orders
+                    </a>
+
+                    <a href="#" class="nav-pill-custom">
+                        <i class="bi bi-geo-alt"></i> Track Your Order
+                    </a>
+
+                    <a href="#" class="nav-pill-custom">
+                        <i class="bi bi-pin-map"></i> My Address
+                    </a>
+
+                    <a href="#" class="nav-pill-custom">
+                        <i class="bi bi-gear"></i> Account details
+                    </a>
+
+                    <a href="#" class="nav-pill-custom">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="col-lg-9 col-md-8">
+                <div class="ps-md-4">
+                    
+                    <h1 class="dashboard-heading mb-3">Hello Destiny!</h1>
+
+                    <p class="dashboard-desc mb-5">
+                        From your account dashboard, you can easily check and view your recent orders, 
+                        manage your shipping and billing addresses, and edit your password and account details.
+                    </p>
+
+                    <div class="orders-chart-card shadow-sm">
+                        <h3 class="mb-4" style="font-size: 1.5rem;">Orders</h3>
+                        
+                        <div style="height: 350px;">
+                            <canvas id="ordersBarChart"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('ordersBarChart');
+        
+        class BarWithRoundedCorners extends Chart.controllers.bar {
+            draw() {
+                const { ctx } = this.chart;
+                ctx.save();
+                
+                for (let i = 0; i < this.getMeta().data.length; i++) {
+                    const bar = this.getMeta().data[i];
+                    const { x, y, base, width } = bar.getProps(['x', 'y', 'base', 'width']);
+                    const radius = 8;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x - width / 2, y + radius);
+                    ctx.lineTo(x - width / 2, base);
+                    ctx.lineTo(x + width / 2, base);
+                    ctx.lineTo(x + width / 2, y + radius);
+                    ctx.arcTo(x + width / 2, y, x + width / 2 - radius, y, radius);
+                    ctx.lineTo(x - width / 2 + radius, y);
+                    ctx.arcTo(x - width / 2, y, x - width / 2, y + radius, radius);
+                    
+                    ctx.fillStyle = bar.options.backgroundColor;
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        Chart.register(BarWithRoundedCorners);
+
+        new Chart(ctx, {
+            type: 'BarWithRoundedCorners',
+            data: {
+                labels: ['June', 'July', 'Sept', 'Oct', 'Nov'],
+                datasets: [{
+                    label: 'Orders',
+                    data: [1.5, 2.0, 1.0, 2.5, 3.0],
+                    backgroundColor: '#3BB77E',
+                    maxBarThickness: 60,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 3.0,
+                        ticks: {
+                            stepSize: 1.0,
+                            color: '#7E7E7E',
+                            padding: 10,
+                        },
+                        grid: {
+                            drawBorder: false,
+                            color: '#E0E0E0',
+                            borderDash: [5, 5],
+                        },
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#7E7E7E' },
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(37, 61, 78, 0.9)', 
+                        padding: 10,
+                        borderRadius: 6,
+                    }
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock %}
