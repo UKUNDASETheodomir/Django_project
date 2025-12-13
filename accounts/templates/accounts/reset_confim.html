@@ -1,0 +1,22 @@
+{% extends 'account/base.html' %}
+
+{% block content %}
+<h3 class="text-center mb-3">Set New Password</h3>
+<p class="text-center text-muted">Check your email for the code.</p>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="otp" class="form-label">OTP Code</label>
+        <input type="text" class="form-control" name="otp" maxlength="6" placeholder="Enter code" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="new_password" class="form-label">New Password</label>
+        <input type="password" class="form-control" name="new_password" required>
+    </div>
+
+    <button type="submit" class="btn btn-warning w-100">Change Password</button>
+</form>
+{% endblock %}

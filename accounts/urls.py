@@ -1,5 +1,6 @@
 from django.urls import path
 from orders.views import customerOrder, vendorOrder
+from django.contrib.auth import views as auth_views
 from products.views import create_product, vendor_products, product_list, edit_product, delete_product
 from .views import *
 urlpatterns = [
@@ -22,7 +23,16 @@ urlpatterns = [
  
     path('edit/<int:id>/', edit_product, name='edit_product'),
     path('delete/<int:id>/', delete_product, name='delete_product'),
+    
+    path('login/', login_view, name='login'),
+    path('login/verify/', verify_login_otp, name='verify_login_otp'),
+    path('password-reset/', request_password_reset, name='request_password_reset'),
+    path('password-reset/confirm/', reset_password_confirm, name='reset_password_confirm'),
 ]
+
+
+
+
 
 
 

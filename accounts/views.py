@@ -16,6 +16,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import RegisterForm
 from django.contrib.auth.models import Group
+from django.utils import timezone
+from accounts.models import OTPToken, CustomUser
+from .utils import send_otp_email
 
 
 def register_view(request):
@@ -52,13 +55,94 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request, user)
-            return redirect("dashboard")  
+            request.session['pre_otp_user_id'] = user.id
+        
+            send_otp_email(user)
+            return redirect('verify_login_otp')
         else:
             messages.info(request, "Invalid username or password")
+    return render(request, 'accounts/login.html')
+def verify_login_otp(request):
+    # Check if we have a user waiting in the session
+    user_id = request.session.get('pre_otp_user_id')
+    if not user_id:
+        return redirect('login')
     
-    context = {}
-    return render(request, "accounts/login.html",context)
+    if request.method == "POST":
+        otp_input = request.POST.get("otp")
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            token = OTPToken.objects.get(user=user)
+            
+            # Check logic: Code matches AND is not expired
+            if (token.otp_code == otp_input) and (token.otp_expires_at > timezone.now()):
+                # Success! Now we actually login
+                login(request, user)
+                
+                # Cleanup
+                del request.session['pre_otp_user_id']
+                token.otp_code = None # Invalidate token
+                token.save()
+                
+                return redirect('home') # Change to your dashboard URL
+            else:
+                messages.error(request, "Invalid or expired OTP")
+                
+        except OTPToken.DoesNotExist:
+            messages.error(request, "Something went wrong. Please try login again.")
+            
+    return render(request, 'accounts/verify_otp.html')
+# --- 2. PASSWORD RESET FLOW ---
+
+def request_password_reset(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        try:
+            user = CustomUser.objects.get(email=email)
+            # Store email in session to pass to next step
+            request.session['reset_email'] = email
+            send_otp_email(user)
+            return redirect('reset_password_confirm')
+        except CustomUser.DoesNotExist:
+            # Security: Don't reveal if user exists, just pretend we sent it
+            messages.success(request, "If an account exists, an OTP has been sent.")
+            
+    return render(request, 'accounts/request_reset.html')
+
+def reset_password_confirm(request):
+    email = request.session.get('reset_email')
+    if not email:
+        return redirect('request_password_reset')
+
+    if request.method == "POST":
+        otp_input = request.POST.get("otp")
+        new_password = request.POST.get("new_password")
+        
+        try:
+            user = CustomUser.objects.get(email=email)
+            token = OTPToken.objects.get(user=user)
+            
+            if (token.otp_code == otp_input) and (token.otp_expires_at > timezone.now()):
+                # Set new password
+                user.set_password(new_password)
+                user.save()
+                
+                # Cleanup
+                token.otp_code = None
+                token.save()
+                del request.session['reset_email']
+                
+                messages.success(request, "Password reset successful. Please login.")
+                return redirect('login')
+            else:
+                messages.error(request, "Invalid or expired OTP")
+                
+        except (CustomUser.DoesNotExist, OTPToken.DoesNotExist):
+             messages.error(request, "Error processing request.")
+
+    return render(request, 'accounts/reset_confirm.html')
+
+
 
 def logout_view(request):
     logout(request)

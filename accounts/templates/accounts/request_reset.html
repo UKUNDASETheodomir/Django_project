@@ -1,0 +1,21 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<h3 class="text-center mb-3">Reset Password</h3>
+<p class="text-center text-muted">Enter your email address to receive a verification code.</p>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" name="email" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Send Code</button>
+</form>
+
+<div class="text-center mt-3">
+    <a href="{% url 'login' %}" class="text-decoration-none">Back to Login</a>
+</div>
+{% endblock %}
