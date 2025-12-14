@@ -63,7 +63,7 @@ def login_view(request):
             messages.info(request, "Invalid username or password")
     return render(request, 'accounts/login.html')
 def verify_login_otp(request):
-    # Check if we have a user waiting in the session
+
     user_id = request.session.get('pre_otp_user_id')
     if not user_id:
         return redirect('login')
@@ -74,17 +74,19 @@ def verify_login_otp(request):
             user = CustomUser.objects.get(id=user_id)
             token = OTPToken.objects.get(user=user)
             
-            # Check logic: Code matches AND is not expired
-            if (token.otp_code == otp_input) and (token.otp_expires_at > timezone.now()):
-                # Success! Now we actually login
+            
+            if (token.token == otp_input) and (token.expired_at > timezone.now()):
+                
                 login(request, user)
                 
-                # Cleanup
+                
                 del request.session['pre_otp_user_id']
-                token.otp_code = None # Invalidate token
+                
+                token.delete()
+                
                 token.save()
                 
-                return redirect('home') # Change to your dashboard URL
+                return redirect('home') 
             else:
                 messages.error(request, "Invalid or expired OTP")
                 
@@ -92,19 +94,27 @@ def verify_login_otp(request):
             messages.error(request, "Something went wrong. Please try login again.")
             
     return render(request, 'accounts/verify_otp.html')
-# --- 2. PASSWORD RESET FLOW ---
+
 
 def request_password_reset(request):
     if request.method == "POST":
         email = request.POST.get("email")
         try:
             user = CustomUser.objects.get(email=email)
-            # Store email in session to pass to next step
+        
             request.session['reset_email'] = email
             send_otp_email(user)
+        #     exparation_time = timezone.now() + timezone.timedelta(minutes=5)
+        #     new_token = OTPToken(
+        #         user =user,
+               
+        #     )
+        #     expired_at= exparation_time,
+        #     new_token.save()
+            
             return redirect('reset_password_confirm')
         except CustomUser.DoesNotExist:
-            # Security: Don't reveal if user exists, just pretend we sent it
+            
             messages.success(request, "If an account exists, an OTP has been sent.")
             
     return render(request, 'accounts/request_reset.html')
@@ -115,25 +125,28 @@ def reset_password_confirm(request):
         return redirect('request_password_reset')
 
     if request.method == "POST":
-        otp_input = request.POST.get("otp")
+        otp_input = request.POST.get("token")
         new_password = request.POST.get("new_password")
+        new_password_confirm = request.POST.get("confirm_password")
+
+
+        if new_password != new_password_confirm:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'accounts/reset_confirm.html')
         
         try:
             user = CustomUser.objects.get(email=email)
             token = OTPToken.objects.get(user=user)
             
-            if (token.otp_code == otp_input) and (token.otp_expires_at > timezone.now()):
-                # Set new password
+            if (token.token == otp_input) and (token.expired_at > timezone.now()):
+            
                 user.set_password(new_password)
                 user.save()
                 
-                # Cleanup
-                token.otp_code = None
-                token.save()
                 del request.session['reset_email']
                 
                 messages.success(request, "Password reset successful. Please login.")
-                return redirect('login')
+                return redirect('home')
             else:
                 messages.error(request, "Invalid or expired OTP")
                 

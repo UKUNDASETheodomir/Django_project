@@ -32,9 +32,9 @@ class OTPToken(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                  on_delete=models.CASCADE,
                                    related_name='otp_email') 
-    opt_code = models.CharField(max_length=6)
+    token = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
-    expired_at = models.DateTimeField() 
+    expired_at = models.DateTimeField(null=True, blank=True) 
     auth_method = models.CharField(max_length=50, choices=Auth_method_CHOICES, default='email') 
 
 
