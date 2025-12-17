@@ -1,0 +1,145 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .cart-table thead th {
+        background-color: #E6F5EC;
+        /* Light background for the header */
+        border-bottom: 2px solid #3BB77E;
+        font-weight: 700;
+        color: #253D4E;
+    }
+
+    .cart-table tbody td {
+        vertical-align: middle;
+        padding: 20px 10px;
+    }
+
+    .cart-table img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+
+    .quantity-input {
+        width: 60px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+    }
+
+    .cart-summary {
+        background-color: #f8f8f8;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 25px;
+    }
+
+    .cart-summary h4 {
+        color: #3BB77E;
+        font-weight: 700;
+    }
+
+    .btn-checkout {
+        background-color: #3BB77E;
+        color: white;
+        padding: 12px 20px;
+        font-weight: 600;
+        border: none;
+        transition: background-color 0.2s;
+    }
+
+    .btn-checkout:hover {
+        background-color: #2e9966;
+    }
+</style>
+
+<div class="container my-5">
+    <h1 class="fw-bold mb-5">Your Shopping Cart ({{ cart_items|length }} items)</h1>
+
+    <div class="row">
+
+        <div class="col-lg-8">
+            {% if cart_items %}
+            <div class="table-responsive">
+                <table class="table cart-table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Subtotal</th>
+                            <th scope="col">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td class="d-flex align-items-center">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="me-3">
+                                <a href="{% url 'product_detail' item.product.id %}"
+                                    class="text-dark fw-bold text-decoration-none">{{ item.product.name }}</a>
+                            </td>
+                            <td>
+                                <span class="text-muted">${{ item.product.price|floatformat:2 }}</span>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'update_cart_quantity' item.id %}"
+                                    class="d-flex align-items-center">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                        class="quantity-input" onchange="this.form.submit()">
+                                </form>
+                            </td>
+                            <td>
+                                <span class="fs-5 fw-bold text-dark">${{ item.line_total|floatformat:2 }}</span>
+                            </td>
+                            <td>
+                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center py-4" role="alert">
+                <i class="bi bi-cart-x me-2"></i> Your cart is empty. Time to start shopping!
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-outline-success">Continue Shopping</a>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="cart-summary sticky-top" style="top: 20px;">
+                <h4 class="mb-4">Cart Summary</h4>
+                <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                    <span class="text-muted">Subtotal:</span>
+                    <span class="fw-bold text-dark">${{ cart_total|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fs-5 fw-bold text-dark">Estimated Total:</span>
+                    <span class="fs-5 fw-bold text-success">${{ cart_total|floatformat:2 }}</span>
+                </div>
+
+                {% if cart_items %}
+                <a href="{% url 'checkout' %}" class="btn btn-checkout w-100">
+                    Proceed to Checkout <i class="bi bi-arrow-right"></i>
+                </a>
+                {% else %}
+                <button class="btn btn-secondary w-100" disabled>Proceed to Checkout</button>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

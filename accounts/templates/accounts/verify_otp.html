@@ -1,9 +1,9 @@
 {% extends 'accounts/base.html' %}
-{% block title %}Login - SokoHub{% endblock %}
+{% block title %}Verify OTP - SokoHub{% endblock %}
 {% block content %}
 
 <style>
-    /* Scope styles to this page */
+    /* Shared Auth Styles (matched to login.html & register.html) */
     .auth-wrapper {
         min-height: 80vh;
         display: flex;
@@ -21,7 +21,7 @@
         width: 100%;
         max-width: 450px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    }
+   
 
     .auth-title {
         color: #253D4E;
@@ -29,39 +29,6 @@
         margin-bottom: 30px;
         text-align: center;
     }
-
-
-    .form-group {
-        margin-bottom: 20px;
-        position: relative;
-    }
-
-
-    .form-control {
-        height: 50px;
-        padding-left: 45px; /* Space for icon */
-        border: 1px solid #ececec;
-        border-radius: 10px;
-        font-size: 15px;
-        transition: all 0.3s;
-    }
-
-
-    .form-control:focus {
-        border-color: #3BB77E;
-        box-shadow: 0 0 0 0.25rem rgba(59, 183, 126, 0.1);
-    }
-
-    .form-icon {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #7E7E7E;
-        font-size: 18px;
-    }
-
-
     .btn-auth {
         background-color: #3BB77E;
         color: white;
@@ -71,14 +38,28 @@
         width: 100%;
         border: none;
         transition: all 0.3s;
+        font-size: 16px;
     }
-
-
     .btn-auth:hover {
-        background-color: #2da86e; /* Slightly darker teal */
+        background-color: #2da86e;
         transform: translateY(-2px);
     }
-
+    .form-control-otp {
+        height: 50px;
+        border: 1px solid #ececec;
+        border-radius: 10px;
+        font-size: 24px;
+        letter-spacing: 5px;
+        transition: all 0.3s;
+        text-align: center;
+        font-weight: 700;
+        color: #3BB77E;
+    }
+    .form-control-otp:focus {
+        border-color: #3BB77E;
+        box-shadow: 0 0 0 0.25rem rgba(59, 183, 126, 0.1);
+        outline: none;
+    }
     .auth-footer {
         text-align: center;
         margin-top: 25px;
@@ -94,44 +75,33 @@
         text-decoration: underline;
     }
 </style>
-	
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h2 class="auth-title">Welcome Back</h2>
-        
+        <div class="text-center mb-4">
+            <i class="bi bi-shield-lock-fill" style="font-size: 3rem; color: #3BB77E;"></i>
+        </div>
+        <h2 class="auth-title">Two-Factor Authentication</h2>
+        <p class="text-center text-muted mb-4">We have sent a code to your email. Please enter it below.</p>
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
-		
         <form method="POST" action="">
             {% csrf_token %}
             
-            <div class="form-group">
-                <i class="bi bi-person form-icon"></i>
-                <input type="text" name="username" class="form-control" placeholder="Username" required>
+            <div class="mb-4">
+                <input type="text" name="otp" class="form-control form-control-otp" placeholder="000000" maxlength="6" required autofocus>
             </div>
-							
-					
-            <div class="form-group">
-                <i class="bi bi-key form-icon"></i>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-            </div>
-				
+            
             <button type="submit" class="btn btn-auth">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                Verify & Login
             </button>
         </form>
-		
+        
         <div class="auth-footer">
-            <div class="mb-2">
-                <a href="{% url 'request_password_reset' %}" class="text-muted small">Forgot Password?</a>
-            </div>
-            <div>
-                Don't have an account? <a href="{% url 'register' %}" class="auth-link">Sign Up</a>
-            </div>
+            <small>Didn't receive code? <a href="#" class="auth-link">Resend</a></small>
         </div>
     </div>
 </div>

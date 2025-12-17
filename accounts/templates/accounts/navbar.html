@@ -1,157 +1,307 @@
 {% load static %}
-{% block content %}
 
 <style>
-  /* Brand Colors */
+  /* VARIABLES & TYPOGRAPHY */
   :root {
-      --primary-brand-color: #3BB77E;
-      --primary-brand-hover: #33a56f;
-      --dark-text: #253D4E;
-      --gray-text: #7E7E7E;
+    --primary-teal: #3BB77E;
+    --heading-color: #253D4E;
+    --text-grey: #7E7E7E;
+    --border-color: #ececec;
   }
 
-  .navbar {
-      background-color: #fff !important;
-      display: flex !important;
-      justify-content: flex-end !important;
-      align-items: start;
-      border-bottom: 1px solid #eef0ef;
+  /* HEADER STYLES */
+  .header-main {
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 0;
+    background-color: #fff;
   }
 
-  /* Navbar links */
-  .navbar .nav-link {
-    
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--dark-text) !important;
-      transition: 0.3s ease;
-      padding: 3px 5px !important;
-      border-radius: 6px;
-      margin-right: 10px;
+  .container-fluid.custom-container {
+    max-width: 1440px;
+    padding: 0 45px;
   }
 
-  /* Hover effect → Brand color */
-  .navbar .nav-link:hover {
-      color: #fff !important;
-      background-color: var(--primary-brand-color) !important;
+  .search-container {
+    border: 2px solid #BCE3C9;
+    border-radius: 5px;
+    max-width: 700px;
+    width: 100%;
   }
 
-  /* ACTIVE STATE → Brand color */
-  .navbar .nav-link.active {
-      color: #fff !important;
-      background-color: var(--primary-brand-color) !important;
-      font-weight: 600;
+  .search-container select {
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px;
+    outline: none;
+    border-right: 1px solid #eee;
+    width: 150px;
+    background: transparent;
   }
 
-  /* Greeting text */
-  .msg {
-      font-size: 16px;
-      color: var(--dark-text) !important;
-      margin-right: 15px;
-      font-weight: 600;
+  .search-container input {
+    border: none;
+    padding: 10px;
+    width: 100%;
+    outline: none;
   }
 
-  /* Logout button in danger color */
-  .nav-link.logout {
-      font-weight: 600;
-      color: #d9534f !important;
+  .nav-icon-link {
+    text-decoration: none;
+    color: var(--heading-color);
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: color 0.2s;
   }
 
-  .nav-link.logout:hover {
-      background-color: #d9534f !important;
-      color: #fff !important;
+  .nav-icon-link:hover {
+    color: var(--primary-teal);
+  }
+
+  .nav-icon-link i {
+    font-size: 24px;
+    margin-right: 0px;
+    margin-bottom: 3px;
+  }
+
+  .badge-teal {
+    position: absolute;
+    top: -5px;
+    left: 25px;
+    background-color: #FF6B9D;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 10px;
+    z-index: 10;
+  }
+
+  .location-picker {
+    border: 1px solid var(--border-color);
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: var(--primary-teal);
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  }
+
+  /* MENU STYLES */
+  .main-menu-nav {
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+    background-color: #fff;
+  }
+
+  .main-nav-link {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--heading-color);
+    margin-right: 40px;
+    text-decoration: none;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+  }
+
+  .main-nav-link:hover,
+  .main-nav-link.active {
+    color: var(--primary-teal);
+  }
+
+  .main-nav-link i {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+
+  #mobileMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  /* Responsive Toggler */
+  .navbar-toggler {
+    border: none;
+    font-size: 24px;
+    color: var(--heading-color);
   }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-light shadow-sm py-2">
-  <div class="container-fluid">
+<!-- TOP HEADER (Search, Branding, Actions) -->
+<header class="header-main sticky-top">
+  <div class="container-fluid custom-container">
+    <div class="d-flex justify-content-between align-items-center">
 
-    <a class="navbar-brand fs-lg fw-bold" href="#" style="color: var(--primary-brand-color);">
-      SokoHub
-    </a>
+      <!-- Logo (Placeholder text for now, matches style) -->
+      <a href="{% url 'home' %}" class="text-decoration-none me-5">
+        <h2 class="m-0 fw-bold" style="color: var(--primary-teal);">SokoHub</h2>
+      </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <!-- Search Bar -->
+      <div class="d-flex align-items-center gap-4 flex-grow-1 me-5 d-none d-lg-flex">
+        <form action="{% url 'product_list' %}" method="get" class="search-container d-flex align-items-center">
+          <select class="form-select border-0" onchange="if(this.value) window.location.href=this.value;">
+            <option value="{% url 'product_list' %}" {% if not request.GET.category %} selected {% endif %}>
+              All Categories
+            </option>
+            {% for cat in categories %}
+            <option value="{% url 'product_list' %}?category={{ cat.id }}" {% if request.GET.category|add:"0" == cat.id %}
+              selected {% endif %}>
+              {{ cat.name }}
+            </option>
+            {% endfor %}
+          </select>
+          <input type="text" name="q" placeholder="Search for items..." class="form-control border-0"
+            value="{{ request.GET.q }}">
+          <button type="submit" class="btn border-0 p-0"><i class="bi bi-search px-3 text-muted"></i></button>
+        </form>
+      </div>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Right Actions -->
+      <div class="d-flex align-items-center gap-4">
+        <div class="location-picker d-none d-xl-block">
+          <i class="bi bi-geo-alt me-1"></i> Your Location <i class="bi bi-chevron-down ms-1"></i>
+        </div>
 
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <a href="{% url 'wishlist' %}" class="nav-icon-link">
+          <i class="bi bi-heart"></i>
+          {% if wishlist_count > 0 %}
+          <span class="badge-teal">{{ wishlist_count }}</span>
+          {% endif %}
+          <span>Wishlist</span>
+        </a>
 
+        <a href="{% url 'cart' %}" class="nav-icon-link">
+          <i class="bi bi-cart"></i>
+          {% if cart_count > 0 %}
+          <span class="badge-teal">{{ cart_count }}</span>
+          {% endif %}
+          <span>Cart</span>
+        </a>
+
+        <a href="{% url 'user' %}" class="nav-icon-link">
+          <i class="bi bi-person"></i>
+          <span>Account</span>
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler d-lg-none ms-2" type="button" data-bs-toggle="collapse"
+          data-bs-target="#mobileMenu">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- BOTTOM NAVIGATION (Menu Links) -->
+<div class="main-menu-nav d-none d-lg-block">
+  <div class="container-fluid custom-container">
+    <div class="d-flex align-items-center">
+
+      <!-- Dynamic Category Dropdown -->
+      <div class="dropdown me-5">
+        <div class="d-flex align-items-center text-white rounded px-4 py-2 dropdown-toggle" id="categoryDropdown"
+          data-bs-toggle="dropdown" aria-expanded="false"
+          style="background-color: var(--primary-teal); cursor: pointer; font-weight: 700;">
+          <i class="bi bi-grid me-2"></i> Browse Categories
+        </div>
+        <ul class="dropdown-menu shadow-lg border-0 mt-2" aria-labelledby="categoryDropdown" style="min-width: 250px;">
+          {% load category_tags %}
+          {% for cat in categories %}
+          <li>
+            <a class="dropdown-item d-flex align-items-center py-2"
+              href="{% url 'product_list' %}?category={{ cat.id }}">
+              <i class="{{ cat.name|get_icon }} me-3 text-success fs-5"></i>
+              <span class="fw-bold text-dark">{{ cat.name }}</span>
+            </a>
+          </li>
+          {% endfor %}
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a class="dropdown-item text-center small text-muted" href="{% url 'product_list' %}">View All Products</a>
+          </li>
+        </ul>
+      </div>
+
+      <nav class="d-flex">
         {% if request.user.is_authenticated %}
 
-            {% if request.user.user_type == 'V' %}
-              <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'vendor_dashboard' %}active{% endif %}"
-                   href="{% url 'vendor_dashboard' %}">Dashboard</a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'vendor_products' %}active{% endif %}"
-                   href="{% url 'vendor_products' %}">My Products</a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'vendor_orders' %}active{% endif %}"
-                   href="{% url 'vendor_orders' %}">Orders</a>
-              </li>
-
-            {% else %}
-
-              <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                   href="{% url 'home' %}">Home</a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}"
-                   href="{% url 'product_list' %}">Products</a>
-              </li>
-
-              <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'customer_orders' %}active{% endif %}"
-                   href="{% url 'customer_orders' %}">My Orders</a>
-              </li>
-
-            {% endif %}
-
-            <li class="nav-item">
-              <span class="nav-link msg">Hi, {{ request.user.username }}</span>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link logout" href="{% url 'logout' %}">Logout</a>
-            </li>
-
+        {% if request.user.user_type == 'V' %}
+        <a href="{% url 'vendor_dashboard' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'vendor_dashboard' %}active{% endif %}">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'vendor_products' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'vendor_products' %}active{% endif %}">
+          <i class="bi bi-box-seam"></i> My Products
+        </a>
+        <a href="{% url 'vendor_orders' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'vendor_orders' %}active{% endif %}">
+          <i class="bi bi-receipt"></i> Orders
+        </a>
         {% else %}
-
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-               href="{% url 'home' %}">Home</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}"
-               href="{% url 'product_list' %}">Products</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
-               href="{% url 'login' %}">Login</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
-               href="{% url 'register' %}">Register</a>
-          </li>
-
+        <a href="{% url 'home' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+          <i class="bi bi-house"></i> Home
+        </a>
+        <a href="{% url 'product_list' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+          <i class="bi bi-shop"></i> Shop
+        </a>
+        <a href="{% url 'customer_orders' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'customer_orders' %}active{% endif %}">
+          <i class="bi bi-bag-check"></i> My Orders
+        </a>
         {% endif %}
 
-      </ul>
+        <a href="{% url 'logout' %}" class="main-nav-link text-danger ms-auto">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+
+        {% else %}
+        <a href="{% url 'home' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+          <i class="bi bi-house"></i> Home
+        </a>
+        <a href="{% url 'product_list' %}"
+          class="main-nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+          <i class="bi bi-shop"></i> Shop
+        </a>
+        <a href="{% url 'login' %}" class="main-nav-link ms-auto">
+          <i class="bi bi-person-lock"></i> Login
+        </a>
+        <a href="{% url 'register' %}" class="main-nav-link">
+          <i class="bi bi-person-plus"></i> Register
+        </a>
+        {% endif %}
+      </nav>
+
     </div>
-
   </div>
-</nav>
+</div>
 
-{% endblock content %}
+<!-- Mobile Menu (Collapsible) -->
+<div class="collapse d-lg-none bg-white border-bottom" id="mobileMenu">
+  <div class="p-4">
+    <ul class="list-unstyled">
+      {% if request.user.is_authenticated %}
+      <li><a href="{% url 'logout' %}" class="d-block py-2 text-decoration-none text-danger fw-bold">Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}" class="d-block py-2 text-decoration-none fw-bold text-dark">Login</a></li>
+      {% endif %}
+      <li><a href="{% url 'home' %}" class="d-block py-2 text-decoration-none text-dark">Home</a></li>
+      <li><a href="{% url 'product_list' %}" class="d-block py-2 text-decoration-none text-dark">Shop</a></li>
+    </ul>
+  </div>
+</div>

@@ -3,32 +3,143 @@
 {% block title %}{{ product.name }} - SokoHub{% endblock %}
 
 {% block content %}
+<style>
+    /* Gallery Styles */
+    .product-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .main-image-container {
+        position: relative;
+        width: 100%;
+        height: 400px; /* Fixed height for consistency */
+        border: 1px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: crosshair; /* Hint at zoom capability */
+    }
+    .main-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease; /* Smooth reset */
+    }
+    .thumbnail-container {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        object-fit: cover;
+        opacity: 0.7;
+        transition: all 0.2s;
+    }
+    .thumbnail:hover, .thumbnail.active {
+        border-color: #3BB77E;
+        opacity: 1;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                {% endif %}
+        <!-- Gallery Column -->
+        <div class="col-md-6">
+             <div class="product-gallery">
+                <!-- Main Image -->
+                <div class="main-image-container" id="mainImageContainer">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="main-image" id="mainImage" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="" class="main-image" id="mainImage" alt="No Image">
+                    {% endif %}
+                </div>
+                
+                <!-- Thumbnails -->
+                <div class="thumbnail-container">
+                    <!-- Original Image Thumbnail -->
+                     {% if product.image %}
+                    <img src="{{ product.image.url }}" class="thumbnail active" onclick="changeImage(this.src)" alt="Main View">
+                    {% endif %}
+                    
+                    <!-- Gallery Images -->
+                    {% for img in images %}
+                    <img src="{{ img.image.url }}" class="thumbnail" onclick="changeImage(this.src)" alt="Gallery View">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Column -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
-                    <h2 class="card-title">{{ product.name }}</h2>
-                    <p class="card-text">{{ product.description }}</p>
-                    <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
-                    <p class="card-text"><strong>Stock:</strong> {{ product.stock }}</p>
-                    <p class="card-text"><strong>Vendor:</strong> {{ product.vendor.username }}</p>
-                    <p class="card-text"><strong>Status:</strong> {{ product.status|title }}</p>
+                    <h2 class="card-title mb-3">{{ product.name }}</h2>
+                    <p class="card-text text-muted mb-4">{{ product.description }}</p>
+                    <h3 class="text-success mb-3">${{ product.price }}</h3>
+                    
+                    <div class="mb-3">
+                        <strong>Vendor:</strong> {{ product.vendor.username }}<br>
+                        <strong>Status:</strong> <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ product.status|title }}</span><br>
+                        <strong>Stock:</strong> {{ product.stock }} units
+                    </div>
 
                     {% if product.stock > 0 %}
-                        <a href="{% url 'place_order' product.id %}" ><button class="btn btn-success">Place order</button></a>
-                        
+                        <a href="{% url 'place_order' product.id %}" class="btn btn-success btn-lg w-100 mb-3">Place Order</a>
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-success w-100">Add to Cart</a>
                     {% else %}
-                        <button class="btn btn-secondary" disabled>Out of Stock</button>
+                        <button class="btn btn-secondary w-100" disabled>Out of Stock</button>
                     {% endif %}
 
-                    <a href="{% url 'product_list' %}" class="btn btn-link mt-3">Back to Products</a>
+                    <a href="{% url 'product_list' %}" class="btn btn-link mt-3 d-block text-center">Back to Products</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // 1. Image Switching Logic
+    function changeImage(src) {
+        document.getElementById('mainImage').src = src;
+        
+        // Update active class
+        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // 2. Zoom Logic ("Voom")
+    const container = document.getElementById('mainImageContainer');
+    const img = document.getElementById('mainImage');
+
+    container.addEventListener('mousemove', function(e) {
+        const { left, top, width, height } = container.getBoundingClientRect();
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+
+        // Calculate percentage position
+        const xPercent = (x / width) * 100;
+        const yPercent = (y / height) * 100;
+
+        // Apply transform
+        img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        img.style.transform = 'scale(2)'; // Zoom level 2x
+    });
+
+    container.addEventListener('mouseleave', function() {
+        img.style.transform = 'scale(1)';
+        setTimeout(() => {
+            img.style.transformOrigin = 'center center';
+        }, 300);
+    });
+</script>
 {% endblock %}

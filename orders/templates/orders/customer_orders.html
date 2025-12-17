@@ -1,37 +1,109 @@
 {% extends "accounts/base.html" %}
-{% block title %}My Orders{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">My Orders</h2>
-    {% if orders %}
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Placed At</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
-            <tr>
-                <td>{{ order.id }}</td>
-                <td>${{ order.total }}</td>
-                <td>{{ order.status }}</td>
-                <td>{{ order.created_at|date:"D, M d, Y H:i" }}</td>
-                <td>
-                    <a href="{% url 'order_confirmation' order.id %}" class="btn btn-sm btn-info">View</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>You have not placed any orders yet.</p>
-    {% endif %}
-    <button class="btn btn-primary mt-3" onclick="window.location.href='{% url 'product_list' %}'">Create order</button>
+<style>
+    .page-header {
+        background-color: #F7F9FA;
+        padding: 40px 0;
+        margin-bottom: 40px;
+    }
+
+    .order-card {
+        background: white;
+        border: 1px solid #ececec;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+
+    .order-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-color: #3BB77E;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        background-color: #fff8e1;
+        color: #ffc107;
+    }
+
+    .status-completed {
+        background-color: #e8f5e9;
+        color: #4caf50;
+    }
+
+    .status-cancelled {
+        background-color: #ffebee;
+        color: #f44336;
+    }
+</style>
+
+<div class="page-header">
+    <div class="container">
+        <h2 class="fw-bold mb-0">My Orders</h2>
+        <p class="text-muted mt-2">Track and manage your recent orders</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-lg-12">
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover border">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="py-3 ps-4">Order ID</th>
+                            <th class="py-3">Date</th>
+                            <th class="py-3">Status</th>
+                            <th class="py-3">Total</th>
+                            <th class="py-3 text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="status-badge 
+                                    {% if order.status == 'PENDING' %}status-pending
+                                    {% elif order.status == 'COMPLETED' %}status-completed
+                                    {% else %}status-cancelled{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td class="fw-bold text-success">${{ order.total }}</td>
+                            <td class="text-end pe-4">
+                                <a href="{% url 'order_confirmation' order.id %}"
+                                    class="btn btn-sm btn-outline-success">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5 border rounded bg-light">
+                <i class="bi bi-cart-x display-1 text-muted"></i>
+                <h3 class="mt-3">No orders found</h3>
+                <p class="text-muted">You haven't placed any orders yet.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-success mt-3"
+                    style="background-color: #3BB77E; border:none;">
+                    Start Shopping
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

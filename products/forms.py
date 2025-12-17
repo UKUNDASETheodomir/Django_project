@@ -29,6 +29,11 @@ class ProductForm(forms.ModelForm):
             }),
         }
 
+    # Extra fields for multiple images (not part of the model directly)
+    image1 = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}))
+    image2 = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}))
+    image3 = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}))
+
     def clean_image(self):
         image = self.cleaned_data.get('image')
 

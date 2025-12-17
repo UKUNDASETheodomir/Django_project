@@ -2,30 +2,154 @@
 {% block title %}Register - SokoHub{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-body">
-          <h3 class="card-title mb-4 text-center">Register</h3>
+<style>
+    /* Shared Auth Styles (matched to login.html) */
+    .auth-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #F7F9FA;
+        padding: 40px 0;
+    }
 
-          <form method="POST" novalidate>
-            {% csrf_token %}
-            {{ form.as_p}}
-            
-            <button type="submit" class="btn btn-primary w-100">Register</button>
-          </form>
+    .auth-card {
+        background: #fff;
+        border: 1px solid #ececec;
+        border-radius: 15px;
+        padding: 40px;
+        width: 100%;
+        max-width: 550px;
+        /* Slightly wider for register form */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
 
-          <div class="mt-3 text-center">
-            <small>
-              Already have an account?
-              <a href="{% url 'login' %}">Login here</a>
-            </small>
-          </div>
+    .auth-title {
+        color: #253D4E;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+    }
 
+    .btn-auth {
+        background-color: #3BB77E;
+        color: white;
+        font-weight: 700;
+        height: 50px;
+        border-radius: 10px;
+        width: 100%;
+        border: none;
+        transition: all 0.3s;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+
+    .btn-auth:hover {
+        background-color: #2da86e;
+        /* Slightly darker teal */
+        transform: translateY(-2px);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 25px;
+        color: #7E7E7E;
+        font-size: 14px;
+    }
+
+    .auth-link {
+        color: #3BB77E;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Styling Django Form Elements within .register-form */
+    .register-form p {
+        margin-bottom: 20px;
+    }
+
+    .register-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #253D4E;
+        font-size: 14px;
+    }
+
+    .register-form input,
+    .register-form select {
+        display: block;
+        width: 100%;
+        height: 50px;
+        padding: 10px 15px;
+        border: 1px solid #ececec;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: border 0.3s;
+        background-color: #fff;
+    }
+
+    .register-form input:focus,
+    .register-form select:focus {
+        border-color: #3BB77E;
+        outline: none;
+        box-shadow: 0 0 0 0.25rem rgba(59, 183, 126, 0.1);
+    }
+
+    .register-form .helptext {
+        display: block;
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+        line-height: 1.4;
+    }
+
+    .register-form ul.errorlist {
+        list-style: none;
+        padding: 0;
+        color: #dc3545;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    /* Hide the list markers for validation errors */
+    .register-form ul.errorlist li {
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <i class="bi bi-person-plus-fill" style="font-size: 3rem; color: #3BB77E;"></i>
         </div>
-      </div>
+        <h2 class="auth-title">Create an Account</h2>
+
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+
+        <form method="POST" class="register-form" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-auth">
+                <i class="bi bi-person-plus me-2"></i>Register
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <div>
+                Already have an account? <a href="{% url 'login' %}" class="auth-link">Login Here</a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

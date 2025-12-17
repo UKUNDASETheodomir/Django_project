@@ -1,46 +1,232 @@
 {% extends "accounts/base.html" %}
-{% block title %}Order Confirmation{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-sm p-4">
-        <h2 class="text-success text-center">Order Confirmed!</h2>
-        <p class="text-center">Thank you, {{ order.customer.username }}. Your order has been placed successfully.</p>
+<style>
+    .receipt-container {
+        background-color: #F7F9FA;
+        padding: 50px 0;
+        min-height: 80vh;
+    }
 
-        <h4 class="mt-4">Order Details:</h4>
-        <ul class="list-group">
-            <li class="list-group-item"><strong>Order ID:</strong> {{ order.id }}</li>
-            <li class="list-group-item"><strong>Status:</strong> {{ order.status }}</li>
-            <li class="list-group-item"><strong>Total:</strong> ${{ order.total }}</li>
-            <li class="list-group-item"><strong>Phone:</strong> {{ order.phone }}</li>
-            <li class="list-group-item"><strong>Delivery Address:</strong> {{ order.delivery_address }}</li>
-            <li class="list-group-item"><strong>Placed At:</strong> {{ order.created_at|date:"D, M d, Y H:i" }}</li>
-        </ul>
+    .receipt-card {
+        background: white;
+        border: 1px solid #ececec;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 0;
+        overflow: hidden;
+        max-width: 800px;
+        margin: 0 auto;
+    }
 
-        <h4 class="mt-4">Items:</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in order_items %}
-                <tr>
-                    <td>{{ item.product.name }}</td>
-                    <td>${{ item.price }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>${{ item.line_total }}</td>
+    .receipt-header {
+        background-color: #3BB77E;
+        color: white;
+        padding: 40px;
+        text-align: center;
+    }
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    .success-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        border-radius: 50%;
+        display: inline-block;
+    }
 
-        <a href="{% url 'customer_orders' %}" class="btn btn-primary mt-3">View My Orders</a>
+    .receipt-body {
+        padding: 40px;
+    }
+
+    .info-group {
+        margin-bottom: 25px;
+    }
+
+    .info-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        color: #7E7E7E;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .info-value {
+        font-size: 16px;
+        color: #253D4E;
+        font-weight: 500;
+    }
+
+    .order-table th {
+        border-top: none;
+        font-weight: 600;
+        color: #7E7E7E;
+        font-size: 14px;
+        padding-bottom: 15px;
+    }
+
+    .order-table td {
+        vertical-align: middle;
+        padding: 15px 0;
+        border-bottom: 1px solid #ececec;
+    }
+
+    .product-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+        border: 1px solid #eee;
+        margin-right: 15px;
+    }
+
+    .total-section {
+        background-color: #f9f9f9;
+        padding: 20px 40px;
+        border-top: 1px solid #ececec;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .grand-total {
+        font-size: 20px;
+        font-weight: 800;
+        color: #3BB77E;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 2px solid #ddd;
+    }
+
+    .btn-print {
+        background: #e8f5e9;
+        color: #3BB77E;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-print:hover {
+        background: #3BB77E;
+        color: white;
+    }
+</style>
+
+<div class="receipt-container">
+    <div class="container">
+        <!-- Receipt Card -->
+        <div class="receipt-card">
+            <!-- Header -->
+            <div class="receipt-header">
+                <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+                <h2 class="fw-bold mb-2">Thank you for your order!</h2>
+                <p class="mb-0 opacity-75">Your order has been confirmed and is being processed.</p>
+            </div>
+
+            <!-- Body -->
+            <div class="receipt-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="info-group">
+                            <div class="info-label">Order Number</div>
+                            <div class="info-value">#{{ order.id }}</div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">Date</div>
+                            <div class="info-value">{{ order.created_at|date:"F d, Y" }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="info-group">
+                            <div class="info-label">Shipping Address</div>
+                            <div class="info-value">{{ order.delivery_address }}</div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">Customer</div>
+                            <div class="info-value">{{ order.customer.username }}</div>
+                            <div class="info-value small text-muted">{{ order.phone }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <h5 class="fw-bold mb-3 mt-4">Order Items</h5>
+                <div class="table-responsive">
+                    <table class="table order-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th width="50%">Product</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" class="product-thumb" alt="Product">
+                                        {% else %}
+                                        <div
+                                            class="product-thumb d-flex align-items-center justify-content-center bg-light text-muted">
+                                            <i class="bi bi-box-seam"></i>
+                                        </div>
+                                        {% endif %}
+                                        <span class="fw-bold text-dark">{{ item.product.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ item.quantity }}</td>
+                                <td class="text-end">${{ item.price }}</td>
+                                <td class="text-end fw-bold">${{ item.line_total|default:item.price }}</td>
+                                <!-- line_total calculated in view, defaulting to price as fallback if single item logic -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer / Totals -->
+            <div class="total-section">
+                <div class="row justify-content-end">
+                    <div class="col-md-6">
+                        <div class="total-row">
+                            <span class="text-muted">Subtotal</span>
+                            <span class="fw-bold">${{ order.total }}</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="text-muted">Shipping</span>
+                            <span class="text-success">Free</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span>Total</span>
+                            <span>${{ order.total }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a href="{% url 'product_list' %}" class="text-decoration-none fw-bold" style="color: #3BB77E;">
+                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                    <button onclick="window.print()" class="btn-print">
+                        <i class="bi bi-printer me-2"></i> Print Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

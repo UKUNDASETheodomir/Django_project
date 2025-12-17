@@ -1,0 +1,172 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+{% block content %}
+<style>
+    :root {
+        --primary-teal: #3BB77E;
+        --heading-color: #253D4E;
+        --border-color: #ececec;
+    }
+    .checkout-container {
+        padding: 50px 0;
+        background: #F7F9FA;
+        min-height: 80vh;
+    }
+    .checkout-card {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+    .section-title {
+        color: var(--heading-color);
+        font-weight: 700;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+    .form-label {
+        font-weight: 600;
+        color: var(--heading-color);
+    }
+    
+    .form-control {
+        height: 50px;
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-teal);
+        box-shadow: 0 0 0 0.25rem rgba(59, 183, 126, 0.1);
+    }
+    .order-item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed var(--border-color);
+    }
+    .order-item-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .order-item-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #f0f0f0;
+    }
+    .order-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--primary-teal);
+        margin-top: 20px;
+        border-top: 2px solid var(--border-color);
+        padding-top: 20px;
+    }
+    .btn-place-order {
+        background-color: var(--primary-teal);
+        color: white;
+        font-weight: 700;
+        height: 55px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+        margin-top: 25px;
+        font-size: 16px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .btn-place-order:hover {
+        background-color: #2da86e;
+        transform: translateY(-2px);
+    }
+</style>
+<div class="checkout-container">
+    <div class="container">
+        <div class="row">
+            <!-- Left: Shipping Details -->
+            <div class="col-lg-7">
+                <div class="checkout-card">
+                    <h3 class="section-title"><i class="bi bi-geo-alt me-2"></i>Shipping Details</h3>
+                    
+                    <form method="POST" id="checkoutForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Phone Number</label>
+                            {{ form.phone }}
+                            <div class="form-text text-muted">We'll call this number for delivery updates.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Delivery Address</label>
+                            {{ form.delivery_address }}
+                            <div class="form-text text-muted">Include building name, street, etc.</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Right: Order Summary -->
+            <div class="col-lg-5">
+                <div class="checkout-card">
+                    <h3 class="section-title"><i class="bi bi-bag-check me-2"></i>Your Order</h3>
+                    
+                    <div class="order-items-list">
+                        {% for item in cart_items %}
+                        <div class="order-item-row">
+                            <div class="order-item-info">
+                                {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="order-item-img">
+                                {% else %}
+                                <div class="order-item-img d-flex align-items-center justify-content-center bg-light">
+                                    <i class="bi bi-box-seam text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <h6 class="mb-0 text-dark fw-bold">{{ item.product.name }}</h6>
+                                    <small class="text-muted">x {{ item.quantity }}</small>
+                                </div>
+                            </div>
+                            <span class="fw-bold text-dark">${{ item.line_total|floatformat:2 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="order-total-row">
+                        <span>Total</span>
+                        <span>${{ total|floatformat:2 }}</span>
+                    </div>
+                    <button type="submit" form="checkoutForm" class="btn-place-order">
+                        Place Order <i class="bi bi-arrow-right"></i>
+                    </button>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'cart' %}" class="text-decoration-none text-muted small">
+                            <i class="bi bi-arrow-left"></i> Back to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Style Django form fields
+    document.querySelectorAll('#checkoutForm input').forEach(el => {
+        el.classList.add('form-control');
+    });
+</script>
+{% endblock %}

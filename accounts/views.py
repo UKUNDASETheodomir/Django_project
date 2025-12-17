@@ -19,6 +19,8 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 from accounts.models import OTPToken, CustomUser
 from .utils import send_otp_email
+from products.models import *
+from django.db.models import Sum
 
 
 def register_view(request):
@@ -162,8 +164,11 @@ def logout_view(request):
     return redirect("login")
 
 def home_view(request):
-    products= product.objects.all()
-    return render(request, "accounts/home.html",{'products':products})
+    products = product.objects.all()
+    context = {
+        'products': products,
+    }
+    return render(request, 'accounts/home.html', context)
 
 # @allowed_users(allowed_roles=['vendor'])
 @login_required(login_url='login')
@@ -190,14 +195,7 @@ def vendor_dashboard(request):
     context = {"products": recent_products, 'total_pro': total_pro, "act_order": act_order, "pend_order": pend_order, 'unav_pro': unav_pro}
     return render(request,'accounts/vendor_dashboard.html',context)
 
-@login_required(login_url='login')
-def product_list(request):
-    products = product.objects.all()
-    return render(request, 'accounts/product_list.html', {'products': products})
-@login_required(login_url='login')
-def product_detail(request, id):
-    prod = get_object_or_404(product, id=id)
-    return render(request, 'accounts/product_detail.html', {'product': prod}) 
+ 
 
 @login_required(login_url='login')
 # @allowed_users(allowed_roles=['customer'])

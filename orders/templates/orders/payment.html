@@ -1,0 +1,102 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Payment - SokoHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-white border-bottom p-4 text-center">
+                    <h3 class="fw-bold m-0 text-success">Complete Your Order</h3>
+                </div>
+                <div class="card-body p-5">
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted">Order #{{ order.id }}</p>
+                        <h2 class="fw-bold">${{ order.total|floatformat:2 }}</h2>
+                    </div>
+
+                    <div id="paypal-button-container"></div>
+
+                    <!-- Loading Spinner (Hidden by default) -->
+                    <div id="loading-spinner" class="text-center mt-3" style="display: none;">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted small">Processing payment...</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PayPal JS SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD"></script>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    var total = '{{ order.total }}';
+    var orderId = '{{ order.id }}';
+    var redirectUrl = "{% url 'order_confirmation' order.id %}";
+    var paymentUrl = "{% url 'payment_success' %}";
+
+    paypal.Buttons({
+        // Set up the transaction
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: total
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function (data, actions) {
+            document.getElementById('loading-spinner').style.display = 'block';
+            document.getElementById('paypal-button-container').style.display = 'none';
+
+            return actions.order.capture().then(function (details) {
+                // Call your server to save the transaction
+                fetch(paymentUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({
+                        orderID: orderId,
+                        transID: details.id,
+                        status: details.status
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        window.location.href = redirectUrl;
+                    });
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+{% endblock %}

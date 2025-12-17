@@ -1,7 +1,7 @@
 from django.urls import path
 from orders.views import customerOrder, vendorOrder
 from django.contrib.auth import views as auth_views
-from products.views import create_product, vendor_products, product_list, edit_product, delete_product
+from products.views import *
 from .views import *
 urlpatterns = [
     path('', home_view, name='home'),  # <-- home page
@@ -28,6 +28,14 @@ urlpatterns = [
     path('login/verify/', verify_login_otp, name='verify_login_otp'),
     path('password-reset/', request_password_reset, name='request_password_reset'),
     path('password-reset/confirm/', reset_password_confirm, name='reset_password_confirm'),
+    path('wishlist/add/<int:product_id>/', add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/remove/<int:product_id>/', remove_from_wishlist, name='remove_from_wishlist'),
+    path('wishlist/', wishlist_view, name='wishlist'),
+    
+    path('cart/', cart_view, name='cart'), 
+    path('cart/add/<int:product_id>/', add_to_cart, name='add_to_cart'),
+    path('cart/update/<int:item_id>/', update_cart_quantity, name='update_cart_quantity'),
+    path('cart/remove/<int:item_id>/', remove_from_cart, name='remove_from_cart'),
 ]
 
 
