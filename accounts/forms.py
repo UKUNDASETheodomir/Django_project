@@ -68,3 +68,16 @@ class RegisterForm(UserCreationForm):
                 'class': 'form-control',
             })
         }
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone', 'location', 'profile_picture']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Location (Address)'}),
+            'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }

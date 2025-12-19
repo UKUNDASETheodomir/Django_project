@@ -155,6 +155,7 @@
         overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         margin-bottom: 10px;
     }
@@ -265,79 +266,137 @@
         color: #5CB85C;
     }
 </style>
-<div class="container mt-5">
-    <h2 class="mb-4">Available Products</h2>
-
-    {% if user.is_authenticated and user.user_type == 'C' %}
-    <div class="row g-4">
-        {% for item in products %}
-        {% if item.status == 'available' %}
-        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
-            <div class="product-card">
-                {% if item.discount %}
-                <div class="discount-badge">
-                    -{{ item.discount }}%
-                </div>
-                {% endif %}
-
-                <div class="text-center product-image-container">
-                    <a href="{% url 'product_detail' item.id %}" class="d-block w-100 h-100">
-                        {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="{{ item.name }}">
-                        {% else %}
-                        <img src="#" alt="No Image"> <!-- Placeholder fixed -->
-                        {% endif %}
-                    </a>
-                </div>
-
-                <div class="product-category">Snack</div>
-                <!-- Added Vendor Name -->
-                <!-- Added Vendor Name -->
-                <div class="product-vendor">
-                    By <a href="#" class="text-decoration-none text-muted">
-                        {{ item.vendor.username }}
-                    </a>
-                </div>
-
-                <div class="product-title fw-bold">
-                    <a href="{% url 'product_detail' item.id %}" class="text-decoration-none text-dark">
-                        {{ item.name }}
-                    </a>
-                </div>
-
-                <div class="text-warning small mb-2">
-                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                        class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-                    <span class="text-muted ms-1">(4.0)</span>
-                </div>
-
-                <div class="product-bottom">
-                    <div>
-                        <span class="fs-6 fw-bold text-success">${{ item.price }}</span>
-                    </div>
-
-                    <div class="product-actions">
-
-                        <a href="{% url 'add_to_cart' item.id %}" class="add-cart-btn">
-                            <i class="bi bi-cart3 me-1"></i> Add
+<div class="main-container container-fluid custom-container my-5">
+    <div class="row">
+        <!-- Sidebar Column -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar-card border p-4 rounded-4 mb-4 bg-white">
+                <h5 class="fw-bold mb-4">Category</h5>
+                <ul class="list-unstyled">
+                    {% load category_tags %}
+                    {% for cat in categories %}
+                    <li class="mb-3">
+                        <a href="{% url 'product_list' %}?category={{ cat.id }}" class="text-decoration-none"
+                            style="color: var(--heading-color);">
+                            <i class="{{ cat.name|get_icon }} me-2" style="color: #5CB85C;"></i> {{ cat.name }}
                         </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-                        <a href="{% url 'add_to_wishlist' item.id %}" class="wishlist-btn" title="Add to Wishlist">
-                            <i class="bi bi-heart"></i>
-                        </a>
+            <div class="sidebar-card border p-4 rounded-4 mb-4 bg-white">
+                <h5 class="fw-bold mb-4">Filter by Price</h5>
+                <form action="{% url 'product_list' %}" method="get">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Min Price</label>
+                        <input type="number" name="min_price" class="form-control" placeholder="0"
+                            value="{{ request.GET.min_price }}">
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Max Price</label>
+                        <input type="number" name="max_price" class="form-control" placeholder="1000"
+                            value="{{ request.GET.max_price }}">
+                    </div>
+                    {% if request.GET.category %}
+                    <input type="hidden" name="category" value="{{ request.GET.category }}">
+                    {% endif %}
+                    {% if request.GET.q %}
+                    <input type="hidden" name="q" value="{{ request.GET.q }}">
+                    {% endif %}
+                    <button type="submit" class="btn btn-sm btn-success w-100"
+                        style="background-color: var(--primary-teal); border:none;">Apply Filter</button>
+                </form>
             </div>
         </div>
-        {% endif %}
-        {% empty %}
-        <div class="col-12 text-center">
-            <p class="text-muted">No products available at the moment.</p>
+
+        <!-- Content Column -->
+        <div class="col-lg-9">
+            <h2 class="mb-4">Available Products</h2>
+
+            {% if user.is_authenticated and user.user_type == 'C' %}
+            <div class="row g-4">
+                {% for item in products %}
+                {% if item.status == 'available' %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                    <div class="product-card">
+                        {% if item.discount %}
+                        <div class="discount-badge">
+                            -{{ item.discount }}%
+                        </div>
+                        {% endif %}
+
+                        <div class="text-center product-image-container">
+                            <a href="{% url 'product_detail' item.id %}" class="d-block w-100 h-100">
+                                {% if item.image %}
+                                <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                                {% else %}
+                                <img src="#" alt="No Image">
+                                {% endif %}
+                            </a>
+                        </div>
+
+                        <div class="product-category">Snack</div>
+                        <div class="product-vendor">
+                            By <a href="#" class="text-decoration-none text-muted">
+                                {{ item.vendor.username }}
+                            </a>
+                        </div>
+
+                        <div class="product-title fw-bold">
+                            <a href="{% url 'product_detail' item.id %}" class="text-decoration-none text-dark">
+                                {{ item.name }}
+                            </a>
+                        </div>
+
+                        <div class="text-warning small mb-2">
+                            {% with rating=item.avg_rating|default:0 %}
+                            <i
+                                class="bi {% if rating >= 1 %}bi-star-fill{% elif rating >= 0.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 2 %}bi-star-fill{% elif rating >= 1.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 3 %}bi-star-fill{% elif rating >= 2.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 4 %}bi-star-fill{% elif rating >= 3.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 5 %}bi-star-fill{% elif rating >= 4.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <span class="text-muted ms-1">({{ rating|floatformat:1 }})</span>
+                            {% endwith %}
+                        </div>
+
+                        <div class="product-bottom">
+                            <div>
+                                <span class="fs-6 fw-bold text-success">${{ item.price }}</span>
+                                {% if item.unit %}
+                                <span class="text-muted small">/ {{ item.get_unit_display }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="product-actions">
+                                <a href="{% url 'add_to_cart' item.id %}" class="add-cart-btn">
+                                    <i class="bi bi-cart3 me-1"></i> Add
+                                </a>
+
+                                <a href="{% url 'add_to_wishlist' item.id %}" class="wishlist-btn"
+                                    title="Add to Wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">No products available at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>You need to be a customer to view products.</p>
+            {% endif %}
         </div>
-        {% endfor %}
     </div>
-    {% else %}
-    <p>You need to be a customer to view products.</p>
-    {% endif %}
 </div>
 {% endblock %}

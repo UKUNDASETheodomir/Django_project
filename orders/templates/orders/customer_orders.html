@@ -82,8 +82,8 @@
                             </td>
                             <td class="fw-bold text-success">${{ order.total }}</td>
                             <td class="text-end pe-4">
-                                <a href="{% url 'order_confirmation' order.id %}"
-                                    class="btn btn-sm btn-outline-success">
+                                <a href="{% url 'customer_order_detail' order.id %}"
+                                    class="btn btn-sm btn-outline-success" hx-boost="false">
                                     View Details
                                 </a>
                             </td>

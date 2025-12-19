@@ -2,7 +2,7 @@
 {% block title %}Vendor Dashboard - SokoHub{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-5" hx-boost="true">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Vendor Dashboard</h2>
         <div>
@@ -31,7 +31,11 @@
                     <div class="rounded-circle bg-light p-3 me-3 text-warning"><i class="bi bi-clock-history fs-3"></i>
                     </div>
                     <div>
-                        <h6 class="text-muted mb-1">Pending Orders</h6>
+                        <div class="d-flex align-items-center">
+                            <h6 class="text-muted mb-0 me-2">Pending Orders</h6>
+                            <span class="badge rounded-pill bg-warning-subtle text-warning small fw-bold"
+                                style="font-size: 0.65rem; border: 1px solid currentColor;">WAITING</span>
+                        </div>
                         <h4 class="fw-bold mb-0">{{ pend_order }}</h4>
                     </div>
                 </div>
@@ -43,7 +47,11 @@
                     <div class="rounded-circle bg-light p-3 me-3 text-info"><i class="bi bi-check-circle fs-3"></i>
                     </div>
                     <div>
-                        <h6 class="text-muted mb-1">Active Orders</h6>
+                        <div class="d-flex align-items-center">
+                            <h6 class="text-muted mb-0 me-2">Active Orders</h6>
+                            <span class="badge rounded-pill bg-info-subtle text-info small fw-bold"
+                                style="font-size: 0.65rem; border: 1px solid currentColor;">LIVE</span>
+                        </div>
                         <h4 class="fw-bold mb-0">{{ act_order }}</h4>
                     </div>
                 </div>
@@ -55,7 +63,11 @@
                     <div class="rounded-circle bg-light p-3 me-3 text-danger"><i class="bi bi-slash-circle fs-3"></i>
                     </div>
                     <div>
-                        <h6 class="text-muted mb-1">Unavailable</h6>
+                        <div class="d-flex align-items-center">
+                            <h6 class="text-muted mb-0 me-2">Unavailable</h6>
+                            <span class="badge rounded-pill bg-danger-subtle text-danger small fw-bold"
+                                style="font-size: 0.65rem; border: 1px solid currentColor;">OOS</span>
+                        </div>
                         <h4 class="fw-bold mb-0">{{ unav_pro }}</h4>
                     </div>
                 </div>
@@ -91,13 +103,15 @@
                                 <span class="fw-bold">{{ p.name }}</span>
                             </div>
                         </td>
-                        <td>${{ p.price }}</td>
+                        <td class="fw-bold text-success">${{ p.price }}</td>
                         <td>{{ p.stock }}</td>
                         <td>
                             {% if p.status == 'available' %}
-                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
+                            <span class="badge rounded-pill bg-success-subtle text-success px-3 py-1 fw-bold"
+                                style="font-size: 0.75rem; border: 1px solid currentColor;">ACTIVE</span>
                             {% else %}
-                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Inactive</span>
+                            <span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-1 fw-bold"
+                                style="font-size: 0.75rem; border: 1px solid currentColor;">INACTIVE</span>
                             {% endif %}
                         </td>
                         <td class="text-end pe-4">

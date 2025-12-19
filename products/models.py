@@ -17,8 +17,23 @@ class product(models.Model):
     
     STATUS_CHOICES = (
         ('available', 'Available'),
-        ('unavailable', 'Unvailable'),
+        ('unavailable', 'Unavailable'),
     )
+    
+    UNIT_CHOICES = (
+        ('kg', 'Kilogram (kg)'),
+        ('g', 'Gram (g)'),
+        ('lb', 'Pound (lb)'),
+        ('bag', 'Bag'),
+        ('box', 'Box'),
+        ('liter', 'Liter (L)'),
+        ('ml', 'Milliliter (ml)'),
+        ('pc', 'Piece (pc)'),
+        ('dozen', 'Dozen'),
+        ('pack', 'Pack'),
+        ('meter', 'Meter (m)'),
+    )
+
     vendor = models.ForeignKey('accounts.CustomUser',on_delete = models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=15)
@@ -26,12 +41,19 @@ class product(models.Model):
     price = models.DecimalField(max_digits=20,decimal_places=4)
     stock = models.IntegerField()
     image = models.ImageField(upload_to='media/products/')
+    unit = models.CharField(max_length=50, choices=UNIT_CHOICES, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
     
     
     def __str__(self):
         return self.name 
+
+    def get_average_rating(self):
+        reviews = self.reviews.all()
+        if reviews.exists():
+            return reviews.aggregate(models.Avg('rating'))['rating__avg'] or 0
+        return 0
     
     
 class Wishlist(models.Model):
@@ -79,3 +101,17 @@ class ProductImage(models.Model):
     
     def __str__(self):
         return f"Image for {self.product.name}"
+
+class Review(models.Model):
+    """Product reviews and ratings by customers."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(product, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.IntegerField(default=5, help_text="Rating from 1 to 5")
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating})"

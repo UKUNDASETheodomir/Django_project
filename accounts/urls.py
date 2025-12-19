@@ -1,5 +1,5 @@
 from django.urls import path
-from orders.views import customerOrder, vendorOrder
+from orders.views import customerOrder, vendor_orders  # Fixed import
 from django.contrib.auth import views as auth_views
 from products.views import *
 from .views import *
@@ -15,10 +15,10 @@ urlpatterns = [
     path('products/', product_list, name='product_list'),
     path('products/<int:id>/', product_detail, name='product_detail'),
     path('user/', userPage, name='user'),
-    path('orders/', vendorOrder, name='vendor_orders'),
-    path('customer_orders/', customerOrder, name='customer_orders'),
-    # path('home_page/', HomePage, name='home_page'),
+    # path('orders/', vendor_orders, name='vendor_orders'),
+    # path('customer_orders/', customerOrder, name='customer_orders'),
     path('my-products/', vendor_products, name='vendor_products'),
+    path('my-reviews/', vendor_reviews, name='vendor_reviews'),
     path('create/', create_product, name='create_product'),
  
     path('edit/<int:id>/', edit_product, name='edit_product'),

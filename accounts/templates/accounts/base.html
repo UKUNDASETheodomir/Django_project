@@ -2,39 +2,123 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SokoHub</title>
-    <link rel="stylesheet" 
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'products/css/main.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
+    <!-- HTMX for SPA-like behavior -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             padding: 0;
         }
 
-        /* Make the whole page a flex container */
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* This makes the content area fill space */
-        .content-wrapper {
-            flex: 1;
+        #global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease;
+        }
+
+        #global-loader.htmx-indicator.htmx-request,
+        .htmx-request #global-loader {
+            display: flex;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .bg-success {
+            background-color: var(--primary-teal) !important;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
+
+    <script>
+        // HTMX Initialization for Bootstrap components
+        htmx.onLoad(function (content) {
+            // Re-initialize Bootstrap dropdowns
+            var dropdownElementList = [].slice.call(content.querySelectorAll('.dropdown-toggle'))
+            var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl)
+            });
+
+            // Re-initialize Tooltips
+            var tooltipTriggerList = [].slice.call(content.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Focus username on login/register if present
+            var input = content.querySelector('input[name="username"]');
+            if (input) input.focus();
+
+            // Auto-hide toasts after 5 seconds
+            const toasts = content.querySelectorAll('.toast');
+            toasts.forEach(toastEl => {
+                setTimeout(() => {
+                    var toastInstance = bootstrap.Toast.getInstance(toastEl) || new bootstrap.Toast(toastEl);
+                    if (toastInstance) toastInstance.hide();
+                }, 5000);
+            });
+        });
+    </script>
 </head>
 
-<body>
+<body hx-boost="true" hx-indicator="#global-loader">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="htmx-indicator">
+        <div class="text-center p-4 bg-white rounded-4 shadow-lg border animate-pulse" style="min-width: 200px;">
+            <div class="spinner-border text-success mb-3" role="status"
+                style="width: 3.5rem; height: 3.5rem; border-width: 0.35em;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 class="fw-bold text-success mb-0" style="letter-spacing: 1px;">SokoHub...</h5>
+            <small class="text-muted">Wait for a moment</small>
+        </div>
+    </div>
 
     {% include "accounts/navbar.html" %}
 
@@ -43,9 +127,24 @@
         {% endblock %}
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        {% for message in messages %}
+        <div class="toast align-items-center text-white bg-{% if message.tags == 'success' %}success{% elif message.tags == 'error' or message.tags == 'danger' %}danger{% else %}{{ message.tags|default:'primary' }}{% endif %} border-0 show"
+            role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
     {% include "accounts/footer.html" %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
+
 </html>

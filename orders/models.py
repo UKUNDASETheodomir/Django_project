@@ -15,7 +15,8 @@ class Order(models.Model):
     delivery_address = models.CharField(max_length=255)
     created_at  = models.DateTimeField(auto_now_add=True)
     status= models.CharField(max_length=255,choices = STATUS_CHOICE)
-    total = models.IntegerField()
+    total = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    viewed_by = models.ManyToManyField('accounts.CustomUser', related_name='viewed_orders', blank=True)
 
     def __str__(self):
         return f"Order {self.customer.username}"
@@ -25,8 +26,12 @@ class Order(models.Model):
 class OrderItem(models.Model): 
     order = models.ForeignKey('Order', on_delete = models.CASCADE)
     product = models.ForeignKey(product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    price = models.IntegerField()
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=20, decimal_places=2)
+
+    @property
+    def line_total(self):
+        return self.price * self.quantity
     
 
 

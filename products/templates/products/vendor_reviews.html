@@ -1,0 +1,60 @@
+{% extends 'accounts/base.html' %}
+{% block title %}My Reviews - SokoHub{% endblock %}
+
+{% block content %}
+<div class="container py-5" hx-boost="true">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Product Reviews</h2>
+        <a href="{% url 'vendor_dashboard' %}" class="btn btn-outline-dark">Back to Dashboard</a>
+    </div>
+
+    {% if reviews %}
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="ps-4">Product</th>
+                            <th>Customer</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                        <tr>
+                            <td class="ps-4 fw-bold text-success">{{ review.product.name }}</td>
+                            <td>{{ review.user.username }}</td>
+                            <td>
+                                <div class="text-warning small">
+                                    {% with rating=review.rating %}
+                                    <i class="bi {% if rating >= 1 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 2 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 3 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 4 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    <i class="bi {% if rating >= 5 %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                                    {% endwith %}
+                                </div>
+                            </td>
+                            <td class="text-muted">{{ review.comment }}</td>
+                            <td class="text-muted small">{{ review.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-3 text-muted">
+            <i class="bi bi-chat-square-quote" style="font-size: 3rem;"></i>
+        </div>
+        <h4 class="fw-bold">No Reviews Yet</h4>
+        <p class="text-muted">Customer reviews will appear here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

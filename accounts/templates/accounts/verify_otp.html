@@ -21,7 +21,8 @@
         width: 100%;
         max-width: 450px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-   
+    }
+
 
     .auth-title {
         color: #253D4E;
@@ -29,6 +30,7 @@
         margin-bottom: 30px;
         text-align: center;
     }
+
     .btn-auth {
         background-color: #3BB77E;
         color: white;
@@ -40,10 +42,12 @@
         transition: all 0.3s;
         font-size: 16px;
     }
+
     .btn-auth:hover {
         background-color: #2da86e;
         transform: translateY(-2px);
     }
+
     .form-control-otp {
         height: 50px;
         border: 1px solid #ececec;
@@ -55,22 +59,26 @@
         font-weight: 700;
         color: #3BB77E;
     }
+
     .form-control-otp:focus {
         border-color: #3BB77E;
         box-shadow: 0 0 0 0.25rem rgba(59, 183, 126, 0.1);
         outline: none;
     }
+
     .auth-footer {
         text-align: center;
         margin-top: 25px;
         color: #7E7E7E;
         font-size: 14px;
     }
+
     .auth-link {
         color: #3BB77E;
         text-decoration: none;
         font-weight: 600;
     }
+
     .auth-link:hover {
         text-decoration: underline;
     }
@@ -90,16 +98,17 @@
         {% endfor %}
         <form method="POST" action="">
             {% csrf_token %}
-            
+
             <div class="mb-4">
-                <input type="text" name="otp" class="form-control form-control-otp" placeholder="000000" maxlength="6" required autofocus>
+                <input type="text" name="otp" class="form-control form-control-otp" placeholder="------" maxlength="6"
+                    required autofocus>
             </div>
-            
+
             <button type="submit" class="btn btn-auth">
                 Verify & Login
             </button>
         </form>
-        
+
         <div class="auth-footer">
             <small>Didn't receive code? <a href="#" class="auth-link">Resend</a></small>
         </div>

@@ -22,10 +22,18 @@ def vendor_products(request):
     context = {"products": products}
     return render(request, "products/vendor_products.html",context)
 
+@login_required(login_url='login')
+@vendor_required
+def vendor_reviews(request):
+    reviews = Review.objects.filter(product__vendor=request.user).order_by('-created_at')
+    return render(request, 'products/vendor_reviews.html', {'reviews': reviews})
+
 # @login_required(login_url='login')
 
+from django.db.models import Avg
+
 def product_list(request):
-    products = product.objects.filter(status='available')
+    products = product.objects.filter(status='available').annotate(avg_rating=Avg('reviews__rating'))
     
     # Filter by Category
     category_id = request.GET.get('category')
@@ -53,11 +61,40 @@ def product_list(request):
     return render(request, 'products/product_list.html', context)
 
 
+from .forms import ProductForm, ReviewForm
+from .models import *
+from django.db.models import Avg
+
 @login_required(login_url='login')
 def product_detail(request, id):
     prod = get_object_or_404(product, id=id)
     images = prod.images.all() # Fetch related gallery images
-    return render(request, 'accounts/product_detail.html', {'product': prod, 'images': images})
+    reviews = prod.reviews.all()
+    
+    # Calculate average rating
+    avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+    
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.product = prod
+            review.save()
+            messages.success(request, 'Your review has been submitted!')
+            return redirect('product_detail', id=id)
+    else:
+        review_form = ReviewForm()
+
+    context = {
+        'product': prod, 
+        'images': images,
+        'reviews': reviews,
+        'avg_rating': round(avg_rating, 1),
+        'review_form': review_form,
+        'range': range(1, 6) # for star display
+    }
+    return render(request, 'accounts/product_detail.html', context)
 @login_required(login_url='login')
 def create_product(request):
     if request.user.user_type != 'V':

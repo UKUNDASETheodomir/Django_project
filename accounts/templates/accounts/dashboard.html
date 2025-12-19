@@ -19,7 +19,10 @@
         color: var(--dark-text);
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
         color: var(--dark-text);
         font-weight: 700;
     }
@@ -86,7 +89,7 @@
 <main class="py-5">
     <div class="container">
         <div class="row">
-            
+
             <div class="col-lg-3 col-md-4 mb-4">
                 <div class="d-flex flex-column">
 
@@ -114,26 +117,29 @@
                         <i class="bi bi-gear"></i> Account details
                     </a>
 
-                    <a href="#" class="nav-pill-custom">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </a>
+                    <form action="{% url 'logout' %}" method="post" id="logout-form-dashboard">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-pill-custom border-0 bg-transparent w-100 text-start">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
 
                 </div>
             </div>
 
             <div class="col-lg-9 col-md-8">
                 <div class="ps-md-4">
-                    
+
                     <h1 class="dashboard-heading mb-3">Hello Destiny!</h1>
 
                     <p class="dashboard-desc mb-5">
-                        From your account dashboard, you can easily check and view your recent orders, 
+                        From your account dashboard, you can easily check and view your recent orders,
                         manage your shipping and billing addresses, and edit your password and account details.
                     </p>
 
                     <div class="orders-chart-card shadow-sm">
                         <h3 class="mb-4" style="font-size: 1.5rem;">Orders</h3>
-                        
+
                         <div style="height: 350px;">
                             <canvas id="ordersBarChart"></canvas>
                         </div>
@@ -152,14 +158,14 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('ordersBarChart');
-        
+
         class BarWithRoundedCorners extends Chart.controllers.bar {
             draw() {
                 const { ctx } = this.chart;
                 ctx.save();
-                
+
                 for (let i = 0; i < this.getMeta().data.length; i++) {
                     const bar = this.getMeta().data[i];
                     const { x, y, base, width } = bar.getProps(['x', 'y', 'base', 'width']);
@@ -173,7 +179,7 @@
                     ctx.arcTo(x + width / 2, y, x + width / 2 - radius, y, radius);
                     ctx.lineTo(x - width / 2 + radius, y);
                     ctx.arcTo(x - width / 2, y, x - width / 2, y + radius, radius);
-                    
+
                     ctx.fillStyle = bar.options.backgroundColor;
                     ctx.fill();
                 }
@@ -220,7 +226,7 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(37, 61, 78, 0.9)', 
+                        backgroundColor: 'rgba(37, 61, 78, 0.9)',
                         padding: 10,
                         borderRadius: 6,
                     }

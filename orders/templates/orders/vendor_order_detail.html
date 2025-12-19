@@ -1,0 +1,103 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Order #{{ order.id }} Details - SokoHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <h2 class="fw-bold mb-0 me-3">Order #{{ order.id }}</h2>
+            <span class="badge rounded-pill px-3 py-2 fw-bold 
+                {% if order.status|upper == 'PAID' or order.status|upper == 'ACTIVE' %}bg-success-subtle text-success
+                {% elif order.status|upper == 'PENDING' %}bg-warning-subtle text-warning
+                {% else %}bg-secondary-subtle text-secondary{% endif %}"
+                style="font-size: 0.85rem; border: 1px solid currentColor; opacity: 0.9;">
+                {{ order.status|upper }}
+            </span>
+        </div>
+        <a href="{% url 'vendor_orders' %}" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Orders
+        </a>
+    </div>
+    <p class="text-muted mb-4">Placed on {{ order.created_at|date:"F d, Y at H:i" }}</p>
+
+    <div class="row g-4">
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white p-3 fw-bold border-bottom">
+                    Products in this Order
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th class="text-end pe-4">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" class="rounded border me-3"
+                                                style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% else %}
+                                            <div class="bg-secondary rounded me-3" style="width: 50px; height: 50px;">
+                                            </div>
+                                            {% endif %}
+                                            <span class="fw-bold">{{ item.product.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>${{ item.price|floatformat:2 }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="text-end pe-4 fw-bold">${{ item.line_total|floatformat:2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar / Summary -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white p-3 fw-bold border-bottom">
+                    Customer Info
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                            style="width: 40px; height: 40px;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div>
+                            <p class="fw-bold mb-0">{{ order.customer.username }}</p>
+                            <p class="text-muted small mb-0">{{ order.customer.email }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <p class="mb-1 fw-bold">Shipping Address:</p>
+                    <p class="text-muted small mb-0">{{ order.delivery_address|default:"Not provided" }}</p>
+                </div>
+            </div>
+
+            <div class="card border-0 bg-success text-white shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Total Earnings</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Items Total:</span>
+                        <h3 class="fw-bold mb-0">${{ total_earnings|floatformat:2 }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

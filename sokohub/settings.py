@@ -56,13 +56,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'sokohub.urls'
+# Static and Media configuration
+STATIC_URL = '/statics/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'statics']
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-STATIC_URL = '/statics/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # For production (collectstatic)
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'statics',]
     
 TEMPLATES = [
     {
@@ -141,7 +141,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL defined above
 
 # Default login and logout redirects
 LOGIN_URL = '/login/'             # where to go if not logged in
@@ -149,8 +149,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'  # after successful login
 LOGOUT_REDIRECT_URL = '/login/'     # after logout
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media settings consolidated above
 
 
 
@@ -160,4 +159,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # PayPal Settings
-PAYPAL_CLIENT_ID = 'test'  # Replace with actual Sandbox/Live Client ID
+PAYPAL_CLIENT_ID = 'AalZCqyWtY73S0x7S24XjTubkrSNZOk3Ow6nEQIMlnZaD7DQhyhw_8tY5oMHofyUwQQWmVwFez8LTP4U'  # Replace with actual Sandbox/Live Client ID

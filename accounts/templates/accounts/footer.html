@@ -1,45 +1,198 @@
-{%block content%}
+<style>
+  .footer-main {
+    background-color: #fff;
+    border-top: 1px solid #ececec;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
-<footer class="bg-dark text-white pt-4 pb-2">
-  <div class="container">
+  .footer-top {
+    padding-top: 50px;
+    padding-bottom: 30px;
+  }
+
+  .footer-desc {
+    font-size: 14px;
+    color: #7E7E7E;
+    line-height: 24px;
+    margin-bottom: 30px;
+  }
+
+  .footer-heading {
+    font-size: 20px;
+    font-weight: 700;
+    color: #253D4E;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-list li {
+    margin-bottom: 12px;
+  }
+
+  .footer-link {
+    text-decoration: none;
+    color: #253D4E;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+
+  .footer-link:hover {
+    color: #3BB77E;
+    padding-left: 5px;
+  }
+
+  .contact-item {
+    display: flex;
+    margin-bottom: 15px;
+    color: #253D4E;
+    font-size: 14px;
+  }
+
+  .contact-icon {
+    color: #3BB77E;
+    font-size: 18px;
+    margin-right: 10px;
+    width: 20px;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid #ececec;
+    padding: 30px 0;
+  }
+
+  .social-icon {
+    width: 35px;
+    height: 35px;
+    background-color: #3BB77E;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 10px;
+    text-decoration: none;
+    transition: 0.2s;
+  }
+
+  .social-icon:hover {
+    background-color: #253D4E;
+    color: white;
+    transform: translateY(-3px);
+  }
+</style>
+
+<footer class="footer-main">
+  <div class="container footer-top">
     <div class="row">
+      <!-- Brand & Contact -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <a href="{% url 'home' %}" class="text-decoration-none">
+          <h2 class="fw-bold mb-3" style="color: #3BB77E;">SokoHub</h2>
+        </a>
+        <p class="footer-desc">
+          SokoHub is a leading e-commerce platform offering a wide range of products. We connect vendors and customers
+          for a seamless shopping experience.
+        </p>
 
-      <!-- About Section -->
-      <div class="col-md-4">
-        <h5>Soko Hub</h5>
-        <p>Your trusted marketplace for quality products and seamless shopping experience.</p>
+        <div class="contact-item">
+          <i class="bi bi-geo-alt contact-icon"></i>
+          <span>KK 123 St, Kigali, Rwanda</span>
+        </div>
+        <div class="contact-item">
+          <i class="bi bi-headset contact-icon"></i>
+          <span>(+250) 792 348 251</span>
+        </div>
+        <div class="contact-item">
+          <i class="bi bi-envelope contact-icon"></i>
+          <span>info@sokohub.com</span>
+        </div>
       </div>
 
-      <!-- Links Section -->
-      <div class="col-md-4">
-        <h5>Quick Links</h5>
-        <ul class="list-unstyled">
-          <li><a href="{% url "home" %}" class="text-white text-decoration-none">Home</a></li>
-          <li><a href="{% url "product_list" %}" class="text-white text-decoration-none">Products</a></li>
-          <li><a href="{% url "register" %}" class="text-white text-decoration-none">signup</a></li>
-          <li><a href="{% url "login" %}" class="text-white text-decoration-none">Contact</a></li>
+      <!-- Account -->
+      <div class="col-lg-2 col-md-3 mb-4 col-6">
+        <h5 class="footer-heading">Account</h5>
+        <ul class="footer-list">
+          <li><a href="{% url 'cart' %}" class="footer-link">View Cart</a></li>
+          <li><a href="{% url 'wishlist' %}" class="footer-link">My Wishlist</a></li>
+          <li><a href="{% url 'customer_orders' %}" class="footer-link">Track My Order</a></li>
+          <li><a href="#" class="footer-link">Help Ticket</a></li>
         </ul>
       </div>
 
-      <!-- Contact Section -->
-      <div class="col-md-4" id ="contact">
-        <h5>Contact Us</h5>
-        <ul class="list-unstyled">
-          <li>Email: info@sokohub.com</li>
-          <li>Phone: +250 792348251</li>
-          <li>Location: Kigali, Rwanda</li>
+      <!-- Corporate -->
+      <div class="col-lg-2 col-md-3 mb-4 col-6">
+        <h5 class="footer-heading">Corporate</h5>
+        <ul class="footer-list">
+          <li><a href="#" class="footer-link">Become a Vendor</a></li>
+          <li><a href="#" class="footer-link">Affiliate Program</a></li>
+          <li><a href="#" class="footer-link">Business Opportunities</a></li>
+          <li><a href="#" class="footer-link">Careers</a></li>
+          <li><a href="#" class="footer-link">Our Suppliers</a></li>
         </ul>
       </div>
 
+      <!-- Popular Categories (Dynamic) -->
+      <div class="col-lg-2 col-md-3 mb-4 col-6">
+        <h5 class="footer-heading">Popular</h5>
+        <ul class="footer-list">
+          {% for cat in categories|slice:":5" %}
+          <li>
+            <a href="{% url 'product_list' %}?category={{ cat.id }}" class="footer-link">
+              {{ cat.name }}
+            </a>
+          </li>
+          {% empty %}
+          <li><a href="{% url 'product_list' %}" class="footer-link">All Products</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Install App -->
+      <div class="col-lg-3 col-md-4 mb-4">
+        <h5 class="footer-heading">Install App</h5>
+        <p class="footer-desc mb-3">From App Store or Google Play</p>
+        <div class="d-flex gap-2 mb-4">
+          <button class="btn btn-dark btn-sm d-flex align-items-center gap-2">
+            <i class="bi bi-apple fs-4"></i>
+            <div class="text-start" style="line-height:1.1;">
+              <small style="font-size: 9px;">Download on the</small><br>App Store
+            </div>
+          </button>
+          <button class="btn btn-outline-dark btn-sm d-flex align-items-center gap-2">
+            <i class="bi bi-google-play fs-4"></i>
+            <div class="text-start" style="line-height:1.1;">
+              <small style="font-size: 9px;">GET IT ON</small><br>Google Play
+            </div>
+          </button>
+        </div>
+        <p class="footer-desc mb-2">Secured Payment Gateways</p>
+        <div class="d-flex gap-2 text-secondary fs-4">
+          <i class="bi bi-credit-card-2-front"></i>
+          <i class="bi bi-paypal"></i>
+          <i class="bi bi-wallet2"></i>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <hr class="border-light">
-
-    <div class="text-center">
-      <p class="mb-0">&copy; {{ now|date:"Y" }} Soko Hub. All rights reserved.</p>
+  <!-- Bottom -->
+  <div class="container footer-bottom">
+    <div class="row align-items-center">
+      <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+        <span class="text-muted small">© {% now "Y" %}, <b>SokoHub</b> - All rights reserved.</span>
+      </div>
+      <div class="col-md-6 text-end d-flex justify-content-center justify-content-md-end">
+        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+      </div>
     </div>
-
   </div>
 </footer>
-
-{%endblock%}

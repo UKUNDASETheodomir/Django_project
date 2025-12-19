@@ -10,30 +10,68 @@
         flex-direction: column;
         gap: 15px;
     }
+
+    .rating-input {
+        direction: rtl;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .rating-input input {
+        display: none;
+    }
+
+    .rating-input label {
+        color: #ddd;
+        font-size: 2rem;
+        padding: 0 0.1rem;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .rating-input label:hover,
+    .rating-input label:hover~label,
+    .rating-input input:checked~label {
+        color: #ffc107;
+    }
+
+    .rating-input label:hover:before,
+    .rating-input label:hover~label:before,
+    .rating-input input:checked~label:before {
+        content: "\f586";
+        font-family: "bootstrap-icons";
+    }
+
     .main-image-container {
         position: relative;
         width: 100%;
-        height: 400px; /* Fixed height for consistency */
+        height: 400px;
+        /* Fixed height for consistency */
         border: 1px solid #eee;
         border-radius: 8px;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
-        cursor: crosshair; /* Hint at zoom capability */
+        cursor: crosshair;
+        /* Hint at zoom capability */
     }
+
     .main-image {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
-        transition: transform 0.3s ease; /* Smooth reset */
+        transition: transform 0.3s ease;
+        /* Smooth reset */
     }
+
     .thumbnail-container {
         display: flex;
         gap: 10px;
         overflow-x: auto;
         padding-bottom: 5px;
     }
+
     .thumbnail {
         width: 80px;
         height: 80px;
@@ -44,7 +82,9 @@
         opacity: 0.7;
         transition: all 0.2s;
     }
-    .thumbnail:hover, .thumbnail.active {
+
+    .thumbnail:hover,
+    .thumbnail.active {
         border-color: #3BB77E;
         opacity: 1;
     }
@@ -54,23 +94,24 @@
     <div class="row justify-content-center">
         <!-- Gallery Column -->
         <div class="col-md-6">
-             <div class="product-gallery">
+            <div class="product-gallery">
                 <!-- Main Image -->
                 <div class="main-image-container" id="mainImageContainer">
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" class="main-image" id="mainImage" alt="{{ product.name }}">
+                    <img src="{{ product.image.url }}" class="main-image" id="mainImage" alt="{{ product.name }}">
                     {% else %}
-                        <img src="" class="main-image" id="mainImage" alt="No Image">
+                    <img src="" class="main-image" id="mainImage" alt="No Image">
                     {% endif %}
                 </div>
-                
+
                 <!-- Thumbnails -->
                 <div class="thumbnail-container">
                     <!-- Original Image Thumbnail -->
-                     {% if product.image %}
-                    <img src="{{ product.image.url }}" class="thumbnail active" onclick="changeImage(this.src)" alt="Main View">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="thumbnail active" onclick="changeImage(this.src)"
+                        alt="Main View">
                     {% endif %}
-                    
+
                     <!-- Gallery Images -->
                     {% for img in images %}
                     <img src="{{ img.image.url }}" class="thumbnail" onclick="changeImage(this.src)" alt="Gallery View">
@@ -85,23 +126,125 @@
                 <div class="card-body">
                     <h2 class="card-title mb-3">{{ product.name }}</h2>
                     <p class="card-text text-muted mb-4">{{ product.description }}</p>
-                    <h3 class="text-success mb-3">${{ product.price }}</h3>
-                    
+
+                    <div class="mb-3">
+                        <div class="text-warning small mb-2">
+                            {% with rating=avg_rating|default:0 %}
+                            <i
+                                class="bi {% if rating >= 1 %}bi-star-fill{% elif rating >= 0.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 2 %}bi-star-fill{% elif rating >= 1.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 3 %}bi-star-fill{% elif rating >= 2.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 4 %}bi-star-fill{% elif rating >= 3.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <i
+                                class="bi {% if rating >= 5 %}bi-star-fill{% elif rating >= 4.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            <span class="text-muted ms-1">({{ rating|floatformat:1 }} / 5)</span>
+                            {% endwith %}
+                        </div>
+                    </div>
+
+                    <h3 class="text-success mb-3">${{ product.price }} {% if product.unit %}<span
+                            class="text-muted fs-6">/ {{ product.get_unit_display }}</span>{% endif %}</h3>
+
                     <div class="mb-3">
                         <strong>Vendor:</strong> {{ product.vendor.username }}<br>
-                        <strong>Status:</strong> <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ product.status|title }}</span><br>
+                        <strong>Status:</strong> <span
+                            class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ product.get_status_display }}
+                        </span><br>
                         <strong>Stock:</strong> {{ product.stock }} units
                     </div>
 
                     {% if product.stock > 0 %}
-                        <a href="{% url 'place_order' product.id %}" class="btn btn-success btn-lg w-100 mb-3">Place Order</a>
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-success w-100">Add to Cart</a>
+                    <a href="{% url 'place_order' product.id %}" class="btn btn-success btn-lg w-100 mb-3">Place
+                        Order</a>
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-success w-100">Add to Cart</a>
                     {% else %}
-                        <button class="btn btn-secondary w-100" disabled>Out of Stock</button>
+                    <button class="btn btn-secondary w-100" disabled>Out of Stock</button>
                     {% endif %}
 
-                    <a href="{% url 'product_list' %}" class="btn btn-link mt-3 d-block text-center">Back to Products</a>
+                    <a href="{% url 'product_list' %}" class="btn btn-link mt-3 d-block text-center">Back to
+                        Products</a>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEWS SECTION -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h3 class="fw-bold mb-4">Customer Reviews ({{ reviews.count }})</h3>
+
+                <div class="mb-3">
+                    <span class="fs-4 fw-bold text-warning me-2">{{ avg_rating }}/5</span>
+                    {% for i in range %}
+                    {% if i <= avg_rating %} <i class="bi bi-star-fill text-warning"></i>
+                        {% else %}
+                        <i class="bi bi-star text-warning"></i>
+                        {% endif %}
+                        {% endfor %}
+                </div>
+
+                <!-- Review List -->
+                <div class="mb-5">
+                    {% for review in reviews %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-bold">{{ review.user.username }}</h6>
+                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <div class="mb-2">
+                            {% for i in range %}
+                            <i
+                                class="bi {% if i <= review.rating %}bi-star-fill{% else %}bi-star{% endif %} text-warning small"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="text-muted mb-0">{{ review.comment }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No reviews yet. Be the first to review!</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Add Review Form -->
+                {% if request.user.is_authenticated and request.user.user_type == 'C' %}
+                <h5 class="fw-bold mb-3">Write a Review</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if review_form.errors %}
+                    <div class="alert alert-danger small">
+                        Please select a rating and write a comment.
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-input">
+                            <input type="radio" name="rating" id="star5" value="5"><label for="star5"
+                                class="bi bi-star"></label>
+                            <input type="radio" name="rating" id="star4" value="4"><label for="star4"
+                                class="bi bi-star"></label>
+                            <input type="radio" name="rating" id="star3" value="3"><label for="star3"
+                                class="bi bi-star"></label>
+                            <input type="radio" name="rating" id="star2" value="2"><label for="star2"
+                                class="bi bi-star"></label>
+                            <input type="radio" name="rating" id="star1" value="1"><label for="star1"
+                                class="bi bi-star"></label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Your Review</label>
+                        <textarea name="comment" class="form-control" rows="3"
+                            placeholder="Write your review here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit Review</button>
+
+                </form>
+                {% elif not request.user.is_authenticated %}
+                <div class="alert alert-info">Please <a href="{% url 'login' %}">login</a> to leave a review.</div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -111,7 +254,7 @@
     // 1. Image Switching Logic
     function changeImage(src) {
         document.getElementById('mainImage').src = src;
-        
+
         // Update active class
         document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
         event.target.classList.add('active');
@@ -121,7 +264,7 @@
     const container = document.getElementById('mainImageContainer');
     const img = document.getElementById('mainImage');
 
-    container.addEventListener('mousemove', function(e) {
+    container.addEventListener('mousemove', function (e) {
         const { left, top, width, height } = container.getBoundingClientRect();
         const x = e.clientX - left;
         const y = e.clientY - top;
@@ -135,7 +278,7 @@
         img.style.transform = 'scale(2)'; // Zoom level 2x
     });
 
-    container.addEventListener('mouseleave', function() {
+    container.addEventListener('mouseleave', function () {
         img.style.transform = 'scale(1)';
         setTimeout(() => {
             img.style.transformOrigin = 'center center';

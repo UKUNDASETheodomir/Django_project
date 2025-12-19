@@ -35,17 +35,35 @@
                                     form.description.errors.0 }}</div> {% endif %}
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold small text-uppercase text-muted">Price ($)</label>
                                 {{ form.price }}
                                 {% if form.price.errors %} <div class="text-danger small">{{ form.price.errors.0 }}
                                 </div> {% endif %}
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Unit</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-box-seam"></i></span>
+                                    {{ form.unit }}
+                                </div>
+                                {% if form.unit.errors %} <div class="text-danger small">{{ form.unit.errors.0 }}
+                                </div> {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
                                 <label class="form-label fw-bold small text-uppercase text-muted">Stock Quantity</label>
                                 {{ form.stock }}
                                 {% if form.stock.errors %} <div class="text-danger small">{{ form.stock.errors.0 }}
+                                </div> {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Category</label>
+                                {{ form.category }}
+                                {% if form.category.errors %} <div class="text-danger small">{{ form.category.errors.0
+                                    }}
                                 </div> {% endif %}
                             </div>
 

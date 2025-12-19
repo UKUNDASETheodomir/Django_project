@@ -4,10 +4,13 @@ from .form import OrderForm
 from .models import Order, OrderItem
 from products.models import product, Cart, CartItem
 from django.shortcuts import render
-
 from accounts.models import CustomUser
 from .models import*
+from django.contrib.auth.decorators import login_required
+from accounts.decorators import customer_required,vendor_required
 
+@login_required(login_url='login')
+@customer_required
 def place_order(request, id):
     product_obj = get_object_or_404(product,id=id)
 
@@ -33,9 +36,6 @@ def place_order(request, id):
                 quantity=quantity,
                 price=product_obj.price
             )
-            if product_obj.stock >= quantity:
-                product_obj.stock -= quantity
-                product_obj.save()
 
             return redirect("payment", order_id=order.id)
   
@@ -51,8 +51,6 @@ def order_confirmation(request, id):
     
     order = get_object_or_404(Order, id=id, customer=request.user)
     order_items = OrderItem.objects.filter(order=order)
-    for item in order_items:
-        item.line_total = item.quantity * item.price
 
     return render(request, "orders/order_confirmation.html", {
         "order": order,
@@ -67,35 +65,77 @@ def customer_orders(request):
         "orders": orders
     }
     return render(request, "orders/customer_orders.html", context)
-def vendor_orders(request):
-    vendor = request.user  # assuming vendor is logged in
+@login_required(login_url='login')
+@customer_required
+def customer_order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, customer=request.user)
+    items = order.orderitem_set.all()
+    
+    context = {
+        'order': order,
+        'items': items,
+    }
+    return render(request, 'orders/customer_order_detail.html', context)
 
-    # get all order items that belong to this vendor's products
-    order_items = OrderItem.objects.filter(product__vendor=vendor)
+from decimal import Decimal
+
+@login_required(login_url='login')
+@vendor_required
+def vendor_orders(request):
+    vendor = request.user
 
     # get distinct orders from these items
-    orders = Order.objects.filter(orderitem__in=order_items).distinct()
+    orders = Order.objects.filter(orderitem__product__vendor=vendor).distinct().order_by('-created_at')
     
     orders_with_totals = []
     for order in orders:
-        total = 0
+        total = Decimal('0.00')
         vendor_items = []
         for item in order.orderitem_set.all():
             if item.product.vendor == vendor:
-                total += item.price
+                total += item.line_total
+                item.view_total = item.line_total # item.line_total is a property, view_total is safe as a dynamic attr
                 vendor_items.append(item)
+        print(f"DEBUG: Order {order.id} for Vendor {vendor.username} has {len(vendor_items)} items. Total: {total}")
         orders_with_totals.append({
             "order": order,
             "items": vendor_items,
             "total": total
         })
 
+    print(f"DEBUG: Returning {len(orders_with_totals)} orders with totals.")
+
     context = {
-        "orders": orders,
+        "orders_with_totals": orders_with_totals,
         "vendor": vendor,
-         "orders_with_totals": orders_with_totals
     }
     return render(request, "orders/vendor_orders.html", context)
+
+@login_required(login_url='login')
+@vendor_required
+def vendor_order_detail(request, order_id):
+    vendor = request.user
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Only get items belonging to this vendor
+    items = order.orderitem_set.filter(product__vendor=vendor)
+    
+    if not items.exists():
+        messages.error(request, "Access denied. This order does not contain your products.")
+        return redirect('vendor_orders')
+        
+    # Mark as viewed by this vendor
+    if request.user not in order.viewed_by.all():
+        order.viewed_by.add(request.user)
+        
+    total_earnings = sum(item.line_total for item in items)
+
+    context = {
+        'order': order,
+        'items': items,
+        'total_earnings': total_earnings,
+    }
+    return render(request, 'orders/vendor_order_detail.html', context)
 
 
 def vendorOrder(request):
@@ -123,6 +163,8 @@ def customerOrder(request):
 
 from django.db.models import Sum, F, DecimalField
 
+@login_required(login_url='login')
+@customer_required
 def checkout(request):
     """
     Handles the Checkout process for the entire Cart.
@@ -151,10 +193,6 @@ def checkout(request):
                     quantity=item.quantity,
                     price=item.product.price
                 )
-                # Update stock
-                if item.product.stock >= item.quantity:
-                    item.product.stock -= item.quantity
-                    item.product.save()
 
             # 4. Clear Cart
             cart_items.delete()
@@ -201,6 +239,18 @@ def payment_success(request):
         try:
             order = Order.objects.get(id=order_id)
             order.status = 'PAID'
+            
+            # REDUCE STOCK ON SUCCESSFUL PAYMENT
+            for item in order.orderitem_set.all():
+                if item.product.stock >= item.quantity:
+                    item.product.stock -= item.quantity
+                    item.product.save()
+                else:
+                    # Optional: Handle overselling scenario if necessary
+                    # For now just subtract and go negative or stop at 0
+                    item.product.stock = max(0, item.product.stock - item.quantity)
+                    item.product.save()
+
             order.save()
             return JsonResponse({'message': 'Payment successful', 'status': 'success'})
         except Order.DoesNotExist:

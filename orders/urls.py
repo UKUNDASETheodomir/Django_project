@@ -15,6 +15,8 @@ urlpatterns = [
       path("order/confirmation/<int:id>/", order_confirmation, name="order_confirmation"),
       path("my-orders/", customer_orders, name="customer_orders"),
       path('vendor/orders/', vendor_orders, name='vendor_orders'),
+      path('vendor/order/<int:order_id>/', vendor_order_detail, name='vendor_order_detail'),
+      path('my-orders/<int:order_id>/', customer_order_detail, name='customer_order_detail'),
       path('payment/<int:order_id>/', payment, name='payment'),
       path('payment-success/', payment_success, name='payment_success'),
 

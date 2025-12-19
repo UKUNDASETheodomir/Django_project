@@ -7,11 +7,13 @@
         --heading-color: #253D4E;
         --border-color: #ececec;
     }
+
     .checkout-container {
         padding: 50px 0;
         background: #F7F9FA;
         min-height: 80vh;
     }
+
     .checkout-card {
         background: #fff;
         border: 1px solid var(--border-color);
@@ -20,6 +22,7 @@
         padding: 30px;
         margin-bottom: 20px;
     }
+
     .section-title {
         color: var(--heading-color);
         font-weight: 700;
@@ -28,22 +31,24 @@
         margin-bottom: 20px;
         font-size: 20px;
     }
+
     .form-label {
         font-weight: 600;
         color: var(--heading-color);
     }
-    
+
     .form-control {
         height: 50px;
         padding: 10px 15px;
         border-radius: 10px;
         border: 1px solid var(--border-color);
     }
-    
+
     .form-control:focus {
         border-color: var(--primary-teal);
         box-shadow: 0 0 0 0.25rem rgba(59, 183, 126, 0.1);
     }
+
     .order-item-row {
         display: flex;
         justify-content: space-between;
@@ -52,11 +57,13 @@
         padding-bottom: 15px;
         border-bottom: 1px dashed var(--border-color);
     }
+
     .order-item-info {
         display: flex;
         align-items: center;
         gap: 15px;
     }
+
     .order-item-img {
         width: 60px;
         height: 60px;
@@ -64,6 +71,7 @@
         border-radius: 8px;
         border: 1px solid #f0f0f0;
     }
+
     .order-total-row {
         display: flex;
         justify-content: space-between;
@@ -75,6 +83,7 @@
         border-top: 2px solid var(--border-color);
         padding-top: 20px;
     }
+
     .btn-place-order {
         background-color: var(--primary-teal);
         color: white;
@@ -91,6 +100,7 @@
         justify-content: center;
         gap: 10px;
     }
+
     .btn-place-order:hover {
         background-color: #2da86e;
         transform: translateY(-2px);
@@ -103,10 +113,10 @@
             <div class="col-lg-7">
                 <div class="checkout-card">
                     <h3 class="section-title"><i class="bi bi-geo-alt me-2"></i>Shipping Details</h3>
-                    
-                    <form method="POST" id="checkoutForm">
+
+                    <form method="POST" id="checkoutForm" hx-boost="false">
                         {% csrf_token %}
-                        
+
                         <div class="mb-4">
                             <label class="form-label">Phone Number</label>
                             {{ form.phone }}
@@ -124,13 +134,14 @@
             <div class="col-lg-5">
                 <div class="checkout-card">
                     <h3 class="section-title"><i class="bi bi-bag-check me-2"></i>Your Order</h3>
-                    
+
                     <div class="order-items-list">
                         {% for item in cart_items %}
                         <div class="order-item-row">
                             <div class="order-item-info">
                                 {% if item.product.image %}
-                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="order-item-img">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                    class="order-item-img">
                                 {% else %}
                                 <div class="order-item-img d-flex align-items-center justify-content-center bg-light">
                                     <i class="bi bi-box-seam text-muted"></i>
@@ -152,7 +163,7 @@
                     <button type="submit" form="checkoutForm" class="btn-place-order">
                         Place Order <i class="bi bi-arrow-right"></i>
                     </button>
-                    
+
                     <div class="text-center mt-3">
                         <a href="{% url 'cart' %}" class="text-decoration-none text-muted small">
                             <i class="bi bi-arrow-left"></i> Back to Cart

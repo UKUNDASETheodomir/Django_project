@@ -21,7 +21,7 @@ from accounts.models import OTPToken, CustomUser
 from .utils import send_otp_email
 from products.models import *
 from django.db.models import Sum
-
+from django.db.models import Avg
 
 def register_view(request):
     if request.method == "POST":
@@ -86,8 +86,6 @@ def verify_login_otp(request):
                 
                 token.delete()
                 
-                token.save()
-                
                 return redirect('home') 
             else:
                 messages.error(request, "Invalid or expired OTP")
@@ -98,73 +96,12 @@ def verify_login_otp(request):
     return render(request, 'accounts/verify_otp.html')
 
 
-def request_password_reset(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        try:
-            user = CustomUser.objects.get(email=email)
-        
-            request.session['reset_email'] = email
-            send_otp_email(user)
-        #     exparation_time = timezone.now() + timezone.timedelta(minutes=5)
-        #     new_token = OTPToken(
-        #         user =user,
-               
-        #     )
-        #     expired_at= exparation_time,
-        #     new_token.save()
-            
-            return redirect('reset_password_confirm')
-        except CustomUser.DoesNotExist:
-            
-            messages.success(request, "If an account exists, an OTP has been sent.")
-            
-    return render(request, 'accounts/request_reset.html')
-
-def reset_password_confirm(request):
-    email = request.session.get('reset_email')
-    if not email:
-        return redirect('request_password_reset')
-
-    if request.method == "POST":
-        otp_input = request.POST.get("token")
-        new_password = request.POST.get("new_password")
-        new_password_confirm = request.POST.get("confirm_password")
-
-
-        if new_password != new_password_confirm:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'accounts/reset_confirm.html')
-        
-        try:
-            user = CustomUser.objects.get(email=email)
-            token = OTPToken.objects.get(user=user)
-            
-            if (token.token == otp_input) and (token.expired_at > timezone.now()):
-            
-                user.set_password(new_password)
-                user.save()
-                
-                del request.session['reset_email']
-                
-                messages.success(request, "Password reset successful. Please login.")
-                return redirect('home')
-            else:
-                messages.error(request, "Invalid or expired OTP")
-                
-        except (CustomUser.DoesNotExist, OTPToken.DoesNotExist):
-             messages.error(request, "Error processing request.")
-
-    return render(request, 'accounts/reset_confirm.html')
-
-
-
 def logout_view(request):
     logout(request)
     return redirect("login")
 
 def home_view(request):
-    products = product.objects.all()
+    products = product.objects.all().annotate(avg_rating=Avg('reviews__rating'))
     context = {
         'products': products,
     }
@@ -197,10 +134,93 @@ def vendor_dashboard(request):
 
  
 
+from .forms import RegisterForm, UserProfileForm
+
 @login_required(login_url='login')
-# @allowed_users(allowed_roles=['customer'])
 def userPage(request):
-    return render(request, 'accounts/user.html')
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully')
+            return redirect('user')
+    else:
+        form = UserProfileForm(instance=user)
+    
+    context = {'form': form}
+    return render(request, 'accounts/user.html', context)
+
+def request_password_reset(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        print(f"DEBUG: Password reset request for email: {email}")
+        try:
+            users = CustomUser.objects.filter(email=email)
+            if users.count() > 1:
+                print(f"DEBUG: Multiple users found for email: {email}")
+                messages.error(request, "Multiple accounts found with this email. Please contact support.")
+                return redirect('request_password_reset')
+            
+            user = users.first()
+            if not user:
+                print(f"DEBUG: No user found with email: {email}")
+                messages.error(request, "No account found with this email.")
+                return redirect('request_password_reset')
+
+            print(f"DEBUG: User found: {user.username}")
+            # Generate and send OTP
+            try:
+                send_otp_email(user)
+                # Store email in session to verify later
+                request.session['reset_email'] = email
+                print(f"DEBUG: OTP sent successfully to {email}")
+                messages.success(request, f"An OTP has been sent to {email}")
+                return redirect('reset_password_confirm')
+            except Exception as e:
+                print(f"DEBUG: EMAIL ERROR: {e}")
+                messages.error(request, f"Failed to send reset email: {str(e)}")
+                return redirect('request_password_reset')
+        except Exception as e:
+            print(f"DEBUG: UNEXPECTED ERROR: {e}")
+            messages.error(request, "An unexpected error occurred. Please try again.")
+            return redirect('request_password_reset')
+            
+    return render(request, 'accounts/request_password_reset.html')
+
+def reset_password_confirm(request):
+    if request.method == 'POST':
+        otp_input = request.POST.get('otp')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        email = request.session.get('reset_email')
+        if not email:
+            messages.error(request, "Session expired. Please try again.")
+            return redirect('request_password_reset')
+            
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect('reset_password_confirm')
+            
+        try:
+            user = CustomUser.objects.get(email=email)
+            otp_record = OTPToken.objects.filter(user=user).last()
+            
+            if otp_record and otp_record.token == otp_input and otp_record.expired_at > timezone.now():
+                user.set_password(new_password)
+                user.save()
+                otp_record.delete()
+                del request.session['reset_email']
+                messages.success(request, "Password reset successfully. You can now login.")
+                return redirect('login')
+            else:
+                messages.error(request, "Invalid or expired OTP.")
+                
+        except CustomUser.DoesNotExist:
+             messages.error(request, "User not found.")
+             
+    return render(request, 'accounts/reset_password_confirm.html')
 
 
 # def HomePage(request):
