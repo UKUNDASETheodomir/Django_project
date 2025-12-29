@@ -91,11 +91,11 @@ EMAIL_PORT = 587
 
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'niyompanojosephine@gmail.com'
+EMAIL_HOST_USER = 'sokohubonlineshop@gmail.com'
 
-EMAIL_HOST_PASSWORD = 'glut dxvw cgps vqhj'
+EMAIL_HOST_PASSWORD = 'fhcp zxur wteg ttdx'
 
-DEFAULT_FROM_EMAIL = 'Security Team <niyompanojosephine@gmail.com>'
+DEFAULT_FROM_EMAIL = 'Security Team <sokohubonlineshop@gmail.com>'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
